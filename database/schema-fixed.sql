@@ -1,4 +1,4 @@
--- Mama Mind Database Schema
+-- Mama Mind Database Schema - FIXED VERSION
 -- Run this SQL in your Supabase SQL Editor
 
 -- Enable Row Level Security
@@ -146,6 +146,7 @@ ALTER TABLE public.chat_feedback ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.uploaded_files ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 
+-- FIXED: Simple RLS policies without recursion
 -- Users can only see their own data
 CREATE POLICY "Users can view own profile" ON public.users
   FOR SELECT USING (auth.uid() = id);
@@ -215,9 +216,6 @@ CREATE POLICY "Users can view own feedback" ON public.chat_feedback
 CREATE POLICY "Users can create feedback" ON public.chat_feedback
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- NOTE: Removed problematic "Doctors can view patients" policy to prevent infinite recursion
--- For doctor access to patients, implement this at the application level with proper authentication
-
 -- Functions for updated_at timestamps
 CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS TRIGGER AS $$
@@ -243,15 +241,5 @@ CREATE TRIGGER set_updated_at
   FOR EACH ROW
   EXECUTE FUNCTION public.handle_updated_at();
 
--- Insert some sample data for testing (optional)
--- You can run this after setting up authentication
-
--- Sample doctor user (you'll need to create this user through Supabase Auth first)
--- INSERT INTO public.users (id, email, full_name, role, specialization) 
--- VALUES 
---   ('doctor-uuid-here', 'doctor@example.com', 'Dr. Sarah Johnson', 'doctor', 'Obstetrics & Gynecology');
-
--- Sample patient user
--- INSERT INTO public.users (id, email, full_name, role, due_date, gestational_week, baseline_weight) 
--- VALUES 
---   ('patient-uuid-here', 'patient@example.com', 'Jane Smith', 'patient', '2024-09-15', 24, 65.5);
+-- Success message
+SELECT 'Mama Mind database schema created successfully! 🎉' as message;

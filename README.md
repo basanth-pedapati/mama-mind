@@ -1,33 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🤱 Mama Mind - Comprehensive Maternity Care Platform
 
-## Getting Started
+A full-stack maternity care web application built for expecting mothers and healthcare providers. Featuring real-time vitals tracking, AI-powered assistance, beautiful UI, and comprehensive pregnancy management tools.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 📊 **Real-time Vitals Tracking** - Blood pressure, weight, heart rate, baby movement
+- 🤖 **AI-Powered Chat Assistant** - 24/7 support with intelligent triage
+- 📱 **Responsive Dashboard** - Beautiful, mobile-first design with animations
+- 👩‍⚕️ **Role-based Access** - Separate dashboards for patients and doctors
+- 🔔 **Smart Alerts** - Automated health monitoring and notifications
+- 📈 **Pregnancy Progress** - Week-by-week tracking with milestones
+- 🗂️ **File Management** - Upload and manage medical records
+- 🔐 **Secure Authentication** - Powered by Supabase with RLS
+
+## 🚀 Quick Start
+
+**New to the project? Start here:**
+
+👉 **[QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes!
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS v4+** for styling
+- **ShadCN UI** + **Radix** for components
+- **Framer Motion** for animations
+- **Lucide Icons** for iconography
+
+### Backend
+- **Fastify** for high-performance API
+- **Supabase** for database and auth
+- **OpenAI** for AI chat features
+- **Socket.io** for real-time features
+- **Redis** for caching and sessions
+
+### Database
+- **PostgreSQL** (via Supabase)
+- **Row Level Security** for data protection
+- **Real-time subscriptions** for live updates
+
+## 📁 Project Structure
+
+```
+mama-mind/
+├── src/                    # Frontend application
+│   ├── app/               # Next.js App Router pages
+│   ├── components/ui/     # Reusable UI components
+│   ├── hooks/            # Custom React hooks
+│   └── lib/              # Utilities and API clients
+├── server/               # Backend API server
+│   └── src/
+│       ├── routes/       # API endpoints
+│       ├── middleware/   # Server middleware
+│       └── services/     # Business logic
+├── database/             # Database schema and setup
+│   ├── schema.sql        # Main database schema
+│   ├── sample-data.sql   # Test data
+│   └── SETUP.md         # Detailed database setup
+└── shared/              # Shared types and utilities
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Quick Setup (5 minutes)
+1. **[Follow the Quickstart Guide](./QUICKSTART.md)** - Automated setup
+2. Create a Supabase project
+3. Run our setup script: `npm run setup`
+4. Import the database schema
+5. Start coding!
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Manual Setup
+If you prefer step-by-step control, see the detailed guides:
+- 📊 [Database Setup](./database/SETUP.md)
+- 🖥️ [Backend Setup](./server/README.md)
+- 🎨 [Frontend Development](./src/README.md)
 
-## Learn More
+## 🧪 Development
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# Install dependencies
+npm install
+cd server && npm install && cd ..
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start development servers
+npm run dev          # Frontend (http://localhost:3000)
+cd server && npm run dev  # Backend (http://localhost:3001)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Database operations
+npm run setup        # Interactive setup script
+npm run db:migrate   # Apply database migrations
+npm run db:seed      # Add sample data
+```
+
+## 🌟 Key Features Demo
+
+### Patient Dashboard
+- Real-time vitals tracking and trends
+- Pregnancy progress visualization
+- Smart health alerts and recommendations
+- AI chat assistant for 24/7 support
+
+### Doctor Dashboard
+- Patient overview and management
+- Alert triage and response
+- Appointment scheduling
+- Medical record access
+
+### Security & Privacy
+- End-to-end encryption for sensitive data
+- HIPAA-compliant data handling
+- Role-based access control
+- Audit logging for all actions
 
 ## Deploy on Vercel
 

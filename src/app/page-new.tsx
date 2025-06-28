@@ -169,7 +169,7 @@ export default function Home() {
               <span className="text-xl font-bold text-primary">Mama Mind</span>
             </div>
             <p className="text-muted-foreground text-center md:text-right">
-              © 2024 Mama Mind. Empowering maternal health with technology.
+              © 2025 WOWGDG-Vizag Hackathon.
             </p>
           </div>
         </div>

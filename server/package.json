@@ -5,6 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "tsx watch src/server.ts",
+    "dev-simple": "tsx watch src/server-simple.ts",
     "build": "tsc",
     "start": "node dist/server.js",
     "test": "jest",
@@ -51,5 +52,5 @@
     "tsx": "^4.6.2",
     "typescript": "^5.3.3"
   },
-  "type": "commonjs"
+  "type": "module"
 }

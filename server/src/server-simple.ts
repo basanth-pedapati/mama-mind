@@ -1,5 +1,4 @@
 import Fastify from 'fastify';
-import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 
 // Import routes
@@ -19,12 +18,16 @@ const server = Fastify({
 
 async function start() {
   try {
-    // Register CORS with proper typing
-    await server.register(cors as any, {
-      origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
-      credentials: true,
+    // Simple CORS handling without plugin
+    server.addHook('onRequest', async (request, reply) => {
+      reply.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+      reply.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      reply.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      reply.header('Access-Control-Allow-Credentials', 'true');
+      
+      if (request.method === 'OPTIONS') {
+        reply.status(200).send();
+      }
     });
 
     // Health check endpoint

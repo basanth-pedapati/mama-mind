@@ -1,9 +1,9 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 
-export default async function chatRoutesTest(fastify: FastifyInstance) {
+export default async function chatRoutes(fastify: FastifyInstance) {
   // Health check for chat routes
   fastify.get('/health', async (request: FastifyRequest, reply: FastifyReply) => {
-    return { status: 'ok', service: 'chat-test' };
+    return { status: 'ok', service: 'chat' };
   });
 
   // Placeholder chat endpoint

@@ -19,6 +19,19 @@ A full-stack maternity care web application built for expecting mothers and heal
 
 👉 **[QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes!
 
+**For developers:**
+
+🛠️ **[DEVELOPER-GUIDE.md](./DEVELOPER-GUIDE.md)** - Complete development setup and workflow  
+🎨 **[Frontend Guide](./src/FRONTEND-GUIDE.md)** - React/Next.js development  
+🚀 **[Backend Guide](./server/BACKEND-GUIDE.md)** - Fastify/Node.js development  
+🤝 **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to the project  
+📋 **[TEAM-TEMPLATES.md](./TEAM-TEMPLATES.md)** - Communication templates and workflows
+
+```bash
+# Quick developer setup
+npm run setup:dev
+```
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -84,15 +97,32 @@ If you prefer step-by-step control, see the detailed guides:
 npm install
 cd server && npm install && cd ..
 
+# Quick setup for new developers
+npm run setup:dev
+
 # Start development servers
-npm run dev          # Frontend (http://localhost:3000)
-cd server && npm run dev  # Backend (http://localhost:3001)
+npm run dev:all         # Both frontend and backend
+npm run dev             # Frontend only (http://localhost:3000)
+npm run dev:backend     # Backend only (http://localhost:3001)
 
 # Database operations
-npm run setup        # Interactive setup script
-npm run db:migrate   # Apply database migrations
-npm run db:seed      # Add sample data
+npm run setup           # Interactive setup script
+npm run db:test         # Test database connection
+npm run db:migrate      # Apply database migrations
+npm run db:seed         # Add sample data
+
+# Testing and quality
+npm run test:all        # Run all tests
+npm run lint:all        # Lint all code
+npm run type-check:all  # TypeScript checking
 ```
+
+### 👥 For Team Development
+
+- **Setup:** Run `npm run setup:dev` for guided environment setup
+- **VS Code:** Recommended extensions and settings included
+- **Documentation:** Comprehensive guides for frontend and backend
+- **Templates:** Communication templates for standups, PRs, and planning
 
 ## 🌟 Key Features Demo
 

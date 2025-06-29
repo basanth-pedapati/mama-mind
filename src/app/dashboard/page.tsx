@@ -2,13 +2,20 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    // Check for demo role in localStorage or default to patient
-    const demoRole = localStorage.getItem('demoRole') || 'patient';
+    if (loading) return; // Wait for auth to load
+
+    // Check for demo role in localStorage or user role from auth
+    const demoRole = localStorage.getItem('demoRole') || 
+                    user?.role || 
+                    (user?.email?.includes('doctor') ? 'doctor' : 'patient') ||
+                    'patient';
     
     // Redirect to appropriate dashboard
     if (demoRole === 'doctor') {
@@ -16,7 +23,7 @@ export default function DashboardPage() {
     } else {
       router.replace('/dashboard/patient');
     }
-  }, [router]);
+  }, [router, user, loading]);
 
   // Show loading while redirecting
   return (

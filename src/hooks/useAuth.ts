@@ -47,21 +47,35 @@ export function useAuth() {
           .eq('user_id', session.user.id)
           .single()
 
-        setUser({
+        const userData = {
           id: session.user.id,
           email: session.user.email!,
           role: session.user.user_metadata?.role || 'patient',
           created_at: session.user.created_at!,
           profile
-        })
+        }
+
+        setUser(userData)
+
+        // Set demo role for routing and redirect to appropriate dashboard
+        const role = userData.role
+        localStorage.setItem('demoRole', role)
+        
+        // Redirect to appropriate dashboard
+        if (role === 'doctor') {
+          router.push('/dashboard/doctor')
+        } else {
+          router.push('/dashboard/patient')
+        }
       } else if (event === 'SIGNED_OUT') {
         setUser(null)
+        localStorage.removeItem('demoRole')
       }
       setLoading(false)
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [router])
 
   const signIn = async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -70,6 +84,12 @@ export function useAuth() {
     })
     
     if (error) throw error
+
+    // Set demo role for routing based on user metadata or email
+    const role = data.user?.user_metadata?.role || 
+                 (data.user?.email?.includes('doctor') ? 'doctor' : 'patient')
+    localStorage.setItem('demoRole', role)
+
     return data
   }
 
@@ -107,6 +127,10 @@ export function useAuth() {
         })
 
       if (profileError) throw profileError
+
+      // Set demo role for routing
+      const role = userData.role || 'patient'
+      localStorage.setItem('demoRole', role)
     }
 
     return data

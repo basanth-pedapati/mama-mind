@@ -2,26 +2,27 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import { 
+  Heart, 
   Users, 
-  Activity, 
-  Calendar,
   AlertTriangle,
-  User,
-  Stethoscope,
-  Menu,
-  X,
-  BarChart3,
+  Calendar,
   Phone,
-  TrendingUp,
-  Heart,
-  Bell,
-  LogOut,
   Mail,
-  FileText
+  Activity,
+  LogOut,
+  Search,
+  MoreVertical,
+  X,
+  MessageCircle,
+  Video,
+  FileText,
+  User,
+  Menu
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
@@ -33,209 +34,213 @@ interface Patient {
   riskLevel: 'low' | 'medium' | 'high';
   lastVisit: Date;
   nextAppointment: Date;
-  vitals: {
+  recentVitals: {
     bloodPressure: string;
     weight: string;
-    heartRate: string;
+    status: 'normal' | 'warning' | 'critical';
   };
   alerts: number;
   phone: string;
-  dueDate: Date;
+  email: string;
+  address: string;
+  emergencyContact: string;
+  medicalHistory: string[];
+  currentMedications: string[];
+  allergies: string[];
+  notes: string;
 }
 
-export default function DoctorDashboard() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRiskFilter, setSelectedRiskFilter] = useState<string>('all');
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [showPatientDetails, setShowPatientDetails] = useState(false);
-  const [showAppointments, setShowAppointments] = useState(false);
-
-  const [patients] = useState<Patient[]>([
+const mockPatients: Patient[] = [
     {
       id: '1',
       name: 'Sarah Johnson',
       age: 28,
       gestationalWeek: 28,
-      riskLevel: 'medium',
-      lastVisit: new Date('2024-12-01'),
-      nextAppointment: new Date('2024-12-15'),
-      vitals: { bloodPressure: '135/85', weight: '68.5 kg', heartRate: '78 bpm' },
-      alerts: 1,
-      phone: '+1 (555) 123-4567',
-      dueDate: new Date('2024-08-15')
+    riskLevel: 'low',
+    lastVisit: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+    nextAppointment: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+    recentVitals: {
+      bloodPressure: '120/80',
+      weight: '68.5 kg',
+      status: 'normal'
+    },
+    alerts: 0,
+    phone: '+1 (555) 123-4567',
+    email: 'sarah.johnson@email.com',
+    address: '123 Oak Street, Portland, OR 97201',
+    emergencyContact: 'Mike Johnson (Husband) - +1 (555) 123-4568',
+    medicalHistory: ['Gestational diabetes (controlled)', 'Previous C-section'],
+    currentMedications: ['Prenatal vitamins', 'Folic acid'],
+    allergies: ['Penicillin'],
+    notes: 'Patient is doing well. No concerns at this time.'
     },
     {
       id: '2',
-      name: 'Emily Rodriguez',
+    name: 'Maria Rodriguez',
       age: 32,
       gestationalWeek: 34,
-      riskLevel: 'low',
-      lastVisit: new Date('2024-11-28'),
-      nextAppointment: new Date('2024-12-12'),
-      vitals: { bloodPressure: '120/75', weight: '72.1 kg', heartRate: '72 bpm' },
-      alerts: 0,
-      phone: '+1 (555) 987-6543',
-      dueDate: new Date('2024-07-20')
+    riskLevel: 'medium',
+    lastVisit: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    nextAppointment: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
+    recentVitals: {
+      bloodPressure: '145/92',
+      weight: '78.2 kg',
+      status: 'warning'
+    },
+    alerts: 2,
+    phone: '+1 (555) 234-5678',
+    email: 'maria.rodriguez@email.com',
+    address: '456 Pine Avenue, Seattle, WA 98101',
+    emergencyContact: 'Carlos Rodriguez (Husband) - +1 (555) 234-5679',
+    medicalHistory: ['Hypertension', 'Obesity'],
+    currentMedications: ['Labetalol', 'Prenatal vitamins'],
+    allergies: ['Sulfa drugs'],
+    notes: 'Blood pressure elevated. Monitor closely. Consider bed rest if BP continues to rise.'
     },
     {
       id: '3',
-      name: 'Maria Garcia',
+    name: 'Jennifer Chen',
       age: 25,
-      gestationalWeek: 22,
+    gestationalWeek: 36,
       riskLevel: 'high',
-      lastVisit: new Date('2024-12-03'),
-      nextAppointment: new Date('2024-12-10'),
-      vitals: { bloodPressure: '145/92', weight: '65.8 kg', heartRate: '88 bpm' },
+    lastVisit: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+    nextAppointment: new Date(Date.now() + 0.5 * 24 * 60 * 60 * 1000),
+    recentVitals: {
+      bloodPressure: '160/100',
+      weight: '82.1 kg',
+      status: 'critical'
+    },
       alerts: 3,
+    phone: '+1 (555) 345-6789',
+    email: 'jennifer.chen@email.com',
+    address: '789 Elm Drive, San Francisco, CA 94102',
+    emergencyContact: 'David Chen (Husband) - +1 (555) 345-6790',
+    medicalHistory: ['Preeclampsia', 'Gestational diabetes', 'Previous preterm birth'],
+    currentMedications: ['Nifedipine', 'Insulin', 'Magnesium sulfate'],
+    allergies: ['Latex', 'Iodine'],
+    notes: 'High risk patient. Preeclampsia symptoms present. Consider early delivery if condition worsens.'
+  },
+  {
+    id: '4',
+    name: 'Emily Davis',
+    age: 30,
+    gestationalWeek: 22,
+    riskLevel: 'low',
+    lastVisit: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+    nextAppointment: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    recentVitals: {
+      bloodPressure: '118/76',
+      weight: '64.8 kg',
+      status: 'normal'
+    },
+    alerts: 0,
       phone: '+1 (555) 456-7890',
-      dueDate: new Date('2024-09-30')
-    }
-  ]);
+    email: 'emily.davis@email.com',
+    address: '321 Maple Lane, Austin, TX 73301',
+    emergencyContact: 'James Davis (Husband) - +1 (555) 456-7891',
+    medicalHistory: ['None significant'],
+    currentMedications: ['Prenatal vitamins'],
+    allergies: ['None known'],
+    notes: 'Healthy pregnancy. Patient is following all recommendations well.'
+  }
+];
 
-  const filteredPatients = patients.filter(patient => {
+export default function DoctorDashboardEnhanced() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedRiskFilter, setSelectedRiskFilter] = useState<string>('all');
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const filteredPatients = mockPatients.filter(patient => {
     const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRisk = selectedRiskFilter === 'all' || patient.riskLevel === selectedRiskFilter;
     return matchesSearch && matchesRisk;
   });
 
+  const stats = {
+    totalPatients: mockPatients.length,
+    highRisk: mockPatients.filter(p => p.riskLevel === 'high').length,
+    alertsToday: mockPatients.reduce((sum, p) => sum + p.alerts, 0),
+    appointmentsToday: mockPatients.filter(p => {
+      const today = new Date();
+      const appointmentDate = new Date(p.nextAppointment);
+      return appointmentDate.toDateString() === today.toDateString();
+    }).length
+  };
+
   const getRiskColor = (risk: string) => {
     switch (risk) {
-      case 'low': return 'bg-green-100 text-green-800 border-green-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'high': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'low': return 'bg-green-100 text-green-800';
+      case 'medium': return 'bg-yellow-100 text-yellow-800';
+      case 'high': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const getWeekColor = (week: number) => {
-    if (week < 28) return 'text-blue-600';
-    if (week < 37) return 'text-orange-600';
-    return 'text-green-600';
-  };
-
-  const handlePatientClick = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setShowPatientDetails(true);
-  };
-
-  const statsCards = [
-    {
-      title: 'Total Patients',
-      value: patients.length.toString(),
-      change: '+2 this week',
-      icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
-    },
-    {
-      title: 'Active Alerts',
-      value: patients.reduce((sum, p) => sum + p.alerts, 0).toString(),
-      change: '-1 from yesterday',
-      icon: AlertTriangle,
-      color: 'text-red-600',
-      bgColor: 'bg-red-50'
-    },
-    {
-      title: 'Today\'s Appointments',
-      value: '5',
-      change: '2 remaining',
-      icon: Calendar,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
-    },
-    {
-      title: 'High Risk',
-      value: patients.filter(p => p.riskLevel === 'high').length.toString(),
-      change: 'Needs attention',
-      icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'normal': return 'text-green-600';
+      case 'warning': return 'text-yellow-600';
+      case 'critical': return 'text-red-600';
+      default: return 'text-gray-600';
     }
-  ];
+  };
+
+  const handleCall = (phone: string) => {
+    toast.success(`Calling ${phone}...`);
+  };
+
+  const handleMessage = (email: string, name: string) => {
+    toast.success(`Opening message to ${name}...`);
+  };
+
+  const handleVideoCall = (name: string) => {
+    toast.success(`Initiating video call with ${name}...`);
+  };
+
+  const handleViewRecords = (name: string) => {
+    toast.success(`Opening medical records for ${name}...`);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/5 via-background to-primary/5">
-      {/* Enhanced Header */}
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+      {/* Header */}
       <motion.header 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        className="bg-surface/95 backdrop-blur-md border-b border-border shadow-lg sticky top-0 z-50"
+        className="bg-surface border-b border-border shadow-sm sticky top-0 z-50"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
       >
-        <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center h-auto md:h-16 py-2 md:py-0 gap-y-2 md:gap-y-0">
-            {/* Logo */}
-            <motion.div 
-              className="flex items-center space-x-3"
-              whileHover={{ scale: 1.02 }}
-            >
-              <div className="relative">
-                <Heart className="h-8 w-8 text-secondary" />
-                <motion.div
-                  animate={{ scale: [1, 1.3, 1] }}
-                  transition={{ duration: 2, repeat: Infinity }}
-                  className="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"
-                />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-3">
+              <Heart className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold text-foreground">Mama Mind</span>
+              <Badge variant="secondary" className="hidden sm:inline-flex">Provider Portal</Badge>
               </div>
-              <div>
-                <span className="text-xl font-bold text-foreground hidden sm:block">Mama Mind</span>
-                <span className="text-lg font-bold text-foreground sm:hidden">MM</span>
-                <div className="text-xs text-secondary font-medium hidden sm:block">Doctor Portal</div>
+            
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-medium text-foreground">Dr. Michelle Carter</p>
+                <p className="text-xs text-foreground-muted">Obstetrician</p>
               </div>
-            </motion.div>
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4 md:space-x-6">
-              <motion.div 
-                className="text-right"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                <p className="text-sm font-medium text-foreground">Dr. Amanda Wilson</p>
-                <p className="text-xs text-secondary font-medium">Obstetrics & Gynecology</p>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button variant="ghost" size="sm" className="relative">
-                  <Bell className="h-4 w-4 mr-2" />
-                  <span className="hidden lg:inline">Alerts</span>
-                  <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs">
-                    {patients.reduce((sum, p) => sum + p.alerts, 0)}
-                  </Badge>
+              <Button variant="outline" size="sm" className="hidden sm:flex">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
                 </Button>
-              </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button variant="ghost" size="sm">
-                  <LogOut className="h-4 w-4" />
-                </Button>
-              </motion.div>
-            </div>
-            {/* Mobile Menu Button */}
-            <motion.div 
-              className="md:hidden self-end"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
               <Button
-                variant="ghost"
+                variant="outline" 
                 size="sm"
+                className="sm:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                <motion.div
-                  animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </motion.div>
+                <Menu className="h-4 w-4" />
               </Button>
-            </motion.div>
+            </div>
           </div>
         </div>
+      </motion.header>
+
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
@@ -243,307 +248,509 @@ export default function DoctorDashboard() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-surface/95 backdrop-blur-md border-t border-border"
-            >
-              <div className="px-4 py-4">
-                <motion.div 
-                  className="flex items-center space-x-3 mb-4 p-3 rounded-lg bg-secondary/10"
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                >
-                  <div className="bg-secondary/20 p-2 rounded-full">
-                    <User className="h-4 w-4 text-secondary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Dr. Amanda Wilson</p>
-                    <p className="text-xs text-secondary font-medium">Obstetrics & Gynecology</p>
-                  </div>
-                </motion.div>
-                <div className="space-y-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start relative"
-                  >
-                    <Bell className="h-4 w-4 mr-3" />
-                    Alerts
-                    <Badge className="ml-auto bg-red-500 text-white text-xs">
-                      {patients.reduce((sum, p) => sum + p.alerts, 0)}
-                    </Badge>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start text-foreground-muted hover:text-foreground"
-                    style={{ marginBottom: 0 }}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign Out
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
-      {/* Stats Cards */}
-      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((card) => (
-          <motion.div
-            key={card.title}
-            className={`rounded-xl shadow-md p-4 flex items-center gap-4 ${card.bgColor}`}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            transition={{ type: 'spring', stiffness: 300 }}
+            className="bg-surface border-b border-border sm:hidden"
           >
-            <div className={`rounded-full p-3 ${card.color} bg-white shadow-sm`}>
-              <card.icon className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-xs font-medium text-foreground-muted">{card.title}</p>
-              <p className="text-lg font-bold text-foreground">{card.value}</p>
-              <p className="text-xs text-foreground-muted">{card.change}</p>
+            <div className="px-4 py-3 space-y-2">
+              <div className="text-sm">
+                <p className="font-medium text-foreground">Dr. Michelle Carter</p>
+                <p className="text-foreground-muted">Obstetrician</p>
+              </div>
+              <Button variant="outline" size="sm" className="w-full">
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
             </div>
           </motion.div>
-        ))}
+        )}
+      </AnimatePresence>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center">
+                  <div className="bg-primary/10 p-2 sm:p-3 rounded-full">
+                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  </div>
+                  <div className="ml-3 sm:ml-4">
+                    <p className="text-xs sm:text-sm text-foreground-muted">Total Patients</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.totalPatients}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+                </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center">
+                  <div className="bg-red-100 p-2 sm:p-3 rounded-full">
+                    <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                  </div>
+                  <div className="ml-3 sm:ml-4">
+                    <p className="text-xs sm:text-sm text-foreground-muted">High Risk</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.highRisk}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center">
+                  <div className="bg-yellow-100 p-2 sm:p-3 rounded-full">
+                    <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+                  </div>
+                  <div className="ml-3 sm:ml-4">
+                    <p className="text-xs sm:text-sm text-foreground-muted">Active Alerts</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.alertsToday}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <Card className="h-full">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex items-center">
+                  <div className="bg-blue-100 p-2 sm:p-3 rounded-full">
+                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  </div>
+                  <div className="ml-3 sm:ml-4">
+                    <p className="text-xs sm:text-sm text-foreground-muted">Today&apos;s Appointments</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.appointmentsToday}</p>
+            </div>
+            </div>
+              </CardContent>
+            </Card>
+          </motion.div>
       </div>
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4">
-        {/* Search & Filter */}
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 items-stretch sm:items-center">
+
+        {/* Search and Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6"
+        >
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground-muted" />
           <Input
-            type="text"
             placeholder="Search patients..."
             value={searchTerm}
-            onChange={e => setSearchTerm(e.target.value)}
-            className="flex-1 min-w-0"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
           />
-          <div className="flex gap-2">
-            <Button
-              variant={selectedRiskFilter === 'all' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedRiskFilter('all')}
-              className="whitespace-nowrap"
-            >
-              All
-            </Button>
-            <Button
-              variant={selectedRiskFilter === 'low' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedRiskFilter('low')}
-              className="whitespace-nowrap"
-            >
-              Low Risk
-            </Button>
-            <Button
-              variant={selectedRiskFilter === 'medium' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedRiskFilter('medium')}
-              className="whitespace-nowrap"
-            >
-              Medium Risk
-            </Button>
-            <Button
-              variant={selectedRiskFilter === 'high' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setSelectedRiskFilter('high')}
-              className="whitespace-nowrap"
-            >
-              High Risk
-            </Button>
           </div>
-        </div>
-        {/* Patient Cards Grid */}
+          
+          <div className="flex gap-2">
+            <select
+              value={selectedRiskFilter}
+              onChange={(e) => setSelectedRiskFilter(e.target.value)}
+              className="px-3 py-2 border border-border rounded-lg text-sm flex-shrink-0"
+            >
+              <option value="all">All Risk Levels</option>
+              <option value="low">Low Risk</option>
+              <option value="medium">Medium Risk</option>
+              <option value="high">High Risk</option>
+            </select>
+          </div>
+        </motion.div>
+
+        {/* Patient List */}
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
         >
-          {filteredPatients.map((patient) => (
+          <Card>
+            <CardHeader>
+              <CardTitle>Patient Overview</CardTitle>
+              <CardDescription>
+                Manage your patients and monitor their health status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3 sm:space-y-4">
+                {filteredPatients.map((patient, index) => (
             <motion.div
               key={patient.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="bg-white rounded-xl shadow-lg border border-border hover:shadow-xl transition-all duration-200 cursor-pointer"
-              onClick={() => handlePatientClick(patient)}
-            >
-              <div className="flex items-center gap-3">
-                <div className={`rounded-full p-2 border-2 ${getRiskColor(patient.riskLevel)}`}>
-                  <User className="h-5 w-5" />
-                </div>
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    onClick={() => setSelectedPatient(patient)}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                      {/* Patient Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-foreground truncate">{patient.name}</p>
-                  <p className="text-xs text-foreground-muted truncate">Week {patient.gestationalWeek} • {patient.age} yrs</p>
-                </div>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                          <h3 className="font-semibold text-foreground text-sm sm:text-base">{patient.name}</h3>
+                          <Badge className={`${getRiskColor(patient.riskLevel)} text-xs`} variant="secondary">
+                            {patient.riskLevel} risk
+                          </Badge>
                 {patient.alerts > 0 && (
-                  <Badge className="bg-red-500 text-white text-xs animate-pulse">{patient.alerts} Alert{patient.alerts > 1 ? 's' : ''}</Badge>
+                            <Badge variant="destructive" className="text-xs">
+                              {patient.alerts} alert{patient.alerts > 1 ? 's' : ''}
+                            </Badge>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <span className={`px-2 py-0.5 rounded text-xs font-medium border ${getRiskColor(patient.riskLevel)}`}>{patient.riskLevel.charAt(0).toUpperCase() + patient.riskLevel.slice(1)} Risk</span>
-                <span className={`px-2 py-0.5 rounded text-xs font-medium ${getWeekColor(patient.gestationalWeek)}`}>Week {patient.gestationalWeek}</span>
-                <span className="px-2 py-0.5 rounded text-xs font-medium text-blue-600 bg-blue-50 border border-blue-200">Next: {patient.nextAppointment.toLocaleDateString()}</span>
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-foreground-muted">
+                          <div>
+                            <span className="font-medium">Age:</span> {patient.age}
+                          </div>
+                          <div>
+                            <span className="font-medium">Week:</span> {patient.gestationalWeek}
+                          </div>
+                          <div>
+                            <span className="font-medium">Last Visit:</span>{' '}
+                            {patient.lastVisit.toLocaleDateString()}
+                          </div>
+                          <div>
+                            <span className="font-medium">Next:</span>{' '}
+                            {patient.nextAppointment.toLocaleDateString()}
+                          </div>
+                        </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-2 mt-2">
-                <div className="flex-1 flex items-center gap-2 bg-gray-50 rounded p-2">
-                  <Stethoscope className="h-4 w-4 text-foreground-muted" />
-                  <span className="text-xs">BP: {patient.vitals.bloodPressure}</span>
+
+                      {/* Vitals */}
+                      <div className="bg-gray-50 rounded-lg p-2 sm:p-3 min-w-0 flex-shrink-0">
+                        <p className="text-xs text-foreground-muted mb-1 sm:mb-2">Recent Vitals</p>
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-medium">BP:</span>
+                            <span className={`text-xs ${getStatusColor(patient.recentVitals.status)}`}>
+                              {patient.recentVitals.bloodPressure}
+                            </span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 bg-gray-50 rounded p-2">
-                  <BarChart3 className="h-4 w-4 text-foreground-muted" />
-                  <span className="text-xs">Wt: {patient.vitals.weight}</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-medium">Weight:</span>
+                            <span className="text-xs text-foreground">
+                              {patient.recentVitals.weight}
+                            </span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 bg-gray-50 rounded p-2">
-                  <Activity className="h-4 w-4 text-foreground-muted" />
-                  <span className="text-xs">HR: {patient.vitals.heartRate}</span>
                 </div>
               </div>
-              <div className="block sm:hidden mt-2">
-                <Button size="sm" className="w-full" onClick={e => { e.stopPropagation(); handlePatientClick(patient); }}>
-                  View Details
+
+                      {/* Actions */}
+                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 px-2 sm:px-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCall(patient.phone);
+                          }}
+                        >
+                          <Phone className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          <span className="hidden sm:inline">Call</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 px-2 sm:px-3"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMessage(patient.email, patient.name);
+                          }}
+                        >
+                          <Mail className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          <span className="hidden sm:inline">Message</span>
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedPatient(patient);
+                          }}
+                        >
+                          <MoreVertical className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
+                      </div>
               </div>
             </motion.div>
           ))}
+
+                {filteredPatients.length === 0 && (
+                  <div className="text-center py-8 text-foreground-muted">
+                    <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                    <p>No patients found</p>
+                    <p className="text-sm">Try adjusting your search or filters</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </motion.div>
-        {filteredPatients.length === 0 && (
-          <motion.div 
-            className="text-center py-12"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <Users className="h-12 w-12 mx-auto text-foreground-muted mb-4" />
-            <p className="text-foreground-muted">No patients match your search criteria</p>
-          </motion.div>
-        )}
-      </main>
-      {/* Patient Details Modal */}
+      </div>
+
+      {/* Patient Details Popup */}
       <AnimatePresence>
-        {showPatientDetails && selectedPatient && (
+        {selectedPatient && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 z-50"
-            onClick={() => setShowPatientDetails(false)}
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedPatient(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-surface rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-2 sm:p-6"
-              style={{ width: '100vw', maxWidth: '100vw', borderRadius: '0.75rem' }}
+              className="bg-surface rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-2 sm:p-6">
-                <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-2">
-                  <div className="text-center sm:text-left">
-                    <h3 className="text-lg sm:text-xl font-semibold">{selectedPatient.name}</h3>
-                    <p className="text-foreground-muted text-xs sm:text-sm">
-                      {selectedPatient.age} years • Week {selectedPatient.gestationalWeek}
-                    </p>
+              {/* Header */}
+              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
+                <div className="flex items-center space-x-3">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <User className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">{selectedPatient.name}</h2>
+                    <p className="text-sm text-foreground-muted">Patient ID: {selectedPatient.id}</p>
+                  </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setShowPatientDetails(false)}
+                  onClick={() => setSelectedPatient(null)}
+                  className="h-8 w-8 p-0"
                   >
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+              {/* Content */}
+              <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
+                <div className="p-4 sm:p-6 space-y-6">
+                  {/* Quick Actions */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <Button 
+                      onClick={() => handleCall(selectedPatient.phone)}
+                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                    >
+                      <Phone className="h-5 w-5" />
+                      <span className="text-xs">Call</span>
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleMessage(selectedPatient.email, selectedPatient.name)}
+                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                    >
+                      <MessageCircle className="h-5 w-5" />
+                      <span className="text-xs">Message</span>
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleVideoCall(selectedPatient.name)}
+                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                    >
+                      <Video className="h-5 w-5" />
+                      <span className="text-xs">Video Call</span>
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => handleViewRecords(selectedPatient.name)}
+                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                    >
+                      <FileText className="h-5 w-5" />
+                      <span className="text-xs">Records</span>
+                    </Button>
+                  </div>
+
+                  {/* Patient Information */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Basic Info */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Basic Information</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <span className="font-medium text-foreground-muted">Age:</span>
+                            <p className="text-foreground">{selectedPatient.age} years</p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-foreground-muted">Gestational Week:</span>
+                            <p className="text-foreground">{selectedPatient.gestationalWeek} weeks</p>
+                          </div>
+                          <div>
+                            <span className="font-medium text-foreground-muted">Risk Level:</span>
+                            <Badge className={`${getRiskColor(selectedPatient.riskLevel)} mt-1`}>
+                              {selectedPatient.riskLevel} risk
+                            </Badge>
+                          </div>
+                          <div>
+                            <span className="font-medium text-foreground-muted">Alerts:</span>
+                            <p className="text-foreground">{selectedPatient.alerts}</p>
+                          </div>
+                        </div>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Address:</span>
+                          <p className="text-foreground text-sm">{selectedPatient.address}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Emergency Contact:</span>
+                          <p className="text-foreground text-sm">{selectedPatient.emergencyContact}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
                   {/* Contact Info */}
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Contact Information</CardTitle>
+                        <CardTitle className="text-lg">Contact Information</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                      <div className="flex items-center space-x-2">
-                        <Phone className="h-4 w-4 text-foreground-muted" />
-                        <span className="text-sm">{selectedPatient.phone}</span>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Phone:</span>
+                          <p className="text-foreground">{selectedPatient.phone}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Email:</span>
+                          <p className="text-foreground">{selectedPatient.email}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Last Visit:</span>
+                          <p className="text-foreground">{selectedPatient.lastVisit.toLocaleDateString()}</p>
+                        </div>
+                        <div>
+                          <span className="font-medium text-foreground-muted">Next Appointment:</span>
+                          <p className="text-foreground">{selectedPatient.nextAppointment.toLocaleDateString()}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Medical Information */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Medical History */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Medical History</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {selectedPatient.medicalHistory.map((item, index) => (
+                            <div key={index} className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-primary rounded-full"></div>
+                              <span className="text-sm text-foreground">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Current Medications */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Current Medications</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {selectedPatient.currentMedications.map((med, index) => (
+                            <div key={index} className="flex items-center space-x-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className="text-sm text-foreground">{med}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Allergies and Notes */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Allergies */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Allergies</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          {selectedPatient.allergies.length > 0 ? (
+                            selectedPatient.allergies.map((allergy, index) => (
+                              <div key={index} className="flex items-center space-x-2">
+                                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                                <span className="text-sm text-foreground">{allergy}</span>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="h-4 w-4 text-foreground-muted" />
-                        <span className="text-sm">
-                          Due: {selectedPatient.dueDate.toLocaleDateString()}
-                        </span>
+                            ))
+                          ) : (
+                            <p className="text-sm text-foreground-muted">No known allergies</p>
+                          )}
                       </div>
                     </CardContent>
                   </Card>
-                  {/* Current Vitals */}
+
+                    {/* Recent Vitals */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Recent Vitals</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-foreground-muted">Blood Pressure:</span>
+                            <span className={`text-sm font-medium ${getStatusColor(selectedPatient.recentVitals.status)}`}>
+                              {selectedPatient.recentVitals.bloodPressure}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-foreground-muted">Weight:</span>
+                            <span className="text-sm font-medium text-foreground">
+                              {selectedPatient.recentVitals.weight}
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-foreground-muted">Status:</span>
+                            <Badge className={`${getRiskColor(selectedPatient.recentVitals.status)}`}>
+                              {selectedPatient.recentVitals.status}
+                            </Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Notes */}
                   <Card>
                     <CardHeader>
-                      <CardTitle className="text-sm">Latest Vitals</CardTitle>
+                      <CardTitle className="text-lg">Clinical Notes</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-foreground-muted">Blood Pressure</span>
-                        <span className="text-sm font-medium">{selectedPatient.vitals.bloodPressure}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-foreground-muted">Weight</span>
-                        <span className="text-sm font-medium">{selectedPatient.vitals.weight}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-foreground-muted">Heart Rate</span>
-                        <span className="text-sm font-medium">{selectedPatient.vitals.heartRate}</span>
-                      </div>
+                    <CardContent>
+                      <p className="text-sm text-foreground">{selectedPatient.notes}</p>
                     </CardContent>
                   </Card>
                 </div>
-                {/* Contact Actions Section (below grid, always visible) */}
-                <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                  <Button className="flex-1" variant="secondary" onClick={() => window.open(`tel:${selectedPatient.phone}`)}>
-                    <Phone className="h-4 w-4 mr-2" />
-                    Call
-                  </Button>
-                  <Button className="flex-1" variant="outline" onClick={() => window.open(`mailto:${selectedPatient.phone}@example.com`)}>
-                    <Mail className="h-4 w-4 mr-2" />
-                    Message
-                  </Button>
-                </div>
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3 mt-6">
-                  <Button className="flex-1">
-                    <FileText className="h-4 w-4 mr-2" />
-                    View Full Record
-                  </Button>
-                  <Button variant="outline" className="flex-1" onClick={() => setShowAppointments(true)}>
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Schedule Appointment
-                  </Button>
-                </div>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      {/* Appointments Modal */}
-      <AnimatePresence>
-        {showAppointments && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-2 z-50"
-            onClick={() => setShowAppointments(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-lg shadow-xl w-full max-w-md p-4 sm:p-6"
-              onClick={e => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-bold">Appointments</h2>
-                <Button variant="ghost" size="sm" onClick={() => setShowAppointments(false)}>
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-sm text-foreground-muted mb-4">This is a placeholder for scheduling appointments. Feature coming soon.</p>
-              <Button className="w-full" onClick={() => setShowAppointments(false)}>Close</Button>
             </motion.div>
           </motion.div>
         )}

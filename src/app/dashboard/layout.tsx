@@ -14,7 +14,8 @@ import {
   MessageCircle, 
   BarChart3,
   Baby,
-  Stethoscope
+  Stethoscope,
+  User
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -33,20 +34,22 @@ export default function DashboardLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const patientNavItems = [
-    { icon: Activity, label: 'Dashboard', href: '/dashboard', active: true },
+    { icon: Activity, label: 'Dashboard', href: '/dashboard/patient', active: true },
     { icon: Heart, label: 'Vitals', href: '/dashboard/vitals' },
     { icon: Baby, label: 'Pregnancy Progress', href: '/dashboard/progress' },
     { icon: Calendar, label: 'Appointments', href: '/dashboard/appointments' },
     { icon: MessageCircle, label: 'Chat with AI', href: '/dashboard/chat' },
     { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
+    { icon: User, label: 'Profile', href: '/profile/patient' },
   ]
 
   const doctorNavItems = [
-    { icon: Activity, label: 'Dashboard', href: '/dashboard', active: true },
+    { icon: Activity, label: 'Dashboard', href: '/dashboard/doctor', active: true },
     { icon: Stethoscope, label: 'Patients', href: '/dashboard/patients' },
     { icon: Calendar, label: 'Appointments', href: '/dashboard/appointments' },
     { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
     { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
+    { icon: User, label: 'Profile', href: '/profile/doctor' },
   ]
 
   const navItems = userRole === 'patient' ? patientNavItems : doctorNavItems
@@ -194,11 +197,13 @@ export default function DashboardLayout({
               </motion.div>
 
               {/* Profile menu */}
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors">
-                <span className="text-primary font-semibold text-sm">
-                  {userName.split(' ').map(n => n[0]).join('')}
-                </span>
-              </div>
+              <Link href={userRole === 'patient' ? '/profile/patient' : '/profile/doctor'}>
+                <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center cursor-pointer hover:bg-primary/30 transition-colors">
+                  <span className="text-primary font-semibold text-sm">
+                    {userName.split(' ').map(n => n[0]).join('')}
+                  </span>
+                </div>
+              </Link>
             </div>
           </div>
         </header>

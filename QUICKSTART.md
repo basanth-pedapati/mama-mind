@@ -1,51 +1,90 @@
-# 🚀 Mama Mind - Quick Setup Guide
+# 🚀 Mama Mind - MVP Quickstart Guide
 
-Welcome to Mama Mind! This guide will get you up and running in under 10 minutes.
+Welcome to the **Mama Mind MVP** - your hackathon-ready maternity care platform! This guide will get you up and running in under 5 minutes.
 
-## 📋 Prerequisites
+## 🎯 MVP Demo Features
 
-- Node.js 18+ installed
-- A Supabase account (free tier is fine)
-- Git installed
+✅ **Patient Dashboard** - Gestational tracking, vitals logging, trends visualization  
+✅ **Doctor Dashboard** - Patient management, vitals monitoring, alerts  
+✅ **AI Chat Assistant** - 24/7 pregnancy support with contextual responses  
+✅ **Authentication** - Demo login with role-based access  
+✅ **Modern UI** - Clinical branding, animations, mobile-responsive  
+✅ **Emergency Alerts** - One-click emergency notifications  
+✅ **Data Visualization** - Beautiful charts with Recharts
+✅ **Responsive Design** - Mobile-first, works on all devices
 
-## 🛠️ Quick Setup (5 steps)
+## 🔐 Demo Credentials (Ready to Use!)
 
-### Step 1: Clone and Install Dependencies
+### Patient Login
+- **Email:** `patient@demo.com`
+- **Password:** `demo123`
 
+### Doctor Login  
+- **Email:** `doctor@demo.com`
+- **Password:** `demo123`
+
+## ⚡ Quick Setup (2 Options)
+
+### Option 1: Frontend Only (Fastest - 2 minutes)
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd mama-mind
-
-# Install frontend dependencies
+# Install and start frontend
 npm install
+npm run dev
+```
+Visit: http://localhost:3000
 
-# Install backend dependencies
+### Option 2: Full Stack (Frontend + Backend - 5 minutes)
+```bash
+# Terminal 1: Frontend
+npm install
+npm run dev
+
+# Terminal 2: Backend (for enhanced AI chat)
 cd server
 npm install
-cd ..
+npm run dev
 ```
 
-### Step 2: Create Supabase Project
+## 🎪 Demo Flow & Script
 
-1. Go to [supabase.com](https://supabase.com) and sign in
-2. Click "New Project"
-3. Fill in:
-   - Name: `mama-mind`
-   - Database Password: (create a strong password)
-   - Region: (choose closest to you)
-4. Click "Create new project" and wait 2-3 minutes
+### Patient Journey (3 minutes)
+1. **Login**: Use `patient@demo.com` / `demo123`
+2. **Dashboard Overview**: Point out gestational week (28/40), baby size
+3. **Log Vitals**: Add blood pressure (try 135/85 for "warning" status)
+4. **View Charts**: Show beautiful BP and weight trend visualizations
+5. **AI Chat**: Ask "I'm having back pain, is this normal?"
+6. **Emergency Alert**: Test one-click emergency notification
 
-### Step 3: Run Setup Script
+### Doctor Journey (2 minutes)
+1. **Login**: Use `doctor@demo.com` / `demo123`
+2. **Patient List**: Show patient overview with risk scores and search
+3. **Alert Management**: Demonstrate alert system
+4. **Patient Monitoring**: View patient vitals and trends
 
-```bash
-# Run the automated setup script
-npm run setup
-```
+## ✨ Key Demo Highlights
 
-This script will:
-- Ask for your Supabase credentials
-- Update environment files automatically
+### 🎨 **Beautiful UI/UX**
+- **Clinical Branding**: Professional teal (#8ECAD1) & navy (#466D77) theme
+- **Framer Motion**: Smooth animations throughout
+- **ShadCN UI**: Modern, accessible component library
+- **Mobile Responsive**: Perfect on phones, tablets, desktop
+
+### 🤖 **Smart AI Assistant**
+- Contextual pregnancy guidance
+- Medical triage and recommendations  
+- Emergency situation detection
+- Intelligent responses based on gestational week
+
+### 📊 **Data Visualization**
+- Blood pressure trends (systolic/diastolic lines)
+- Weight progression (beautiful area charts)
+- Real-time status indicators
+- Risk assessment scoring
+
+### 🔔 **Alert System**
+- Emergency notifications with toast feedback
+- Doctor alert management dashboard
+- Real-time status updates
 - Guide you through the next steps
 
 ### Step 4: Setup Database Schema

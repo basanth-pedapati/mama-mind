@@ -54,18 +54,6 @@ export default function Home() {
     }
   }
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut" as const
-      }
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-bg-accent/5">
       {/* Floating background elements */}
@@ -278,14 +266,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <motion.div
                 key={feature.title}
-                variants={itemVariants}
-                whileHover={{ 
-                  y: -5,
-                  transition: { duration: 0.2 }
-                }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
                 className="group"
               >
                 <Card className="h-full bg-surface/80 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/30 group-hover:bg-surface/90">

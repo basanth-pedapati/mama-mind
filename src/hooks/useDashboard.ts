@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { apiService } from '@/lib/api'
 import { VitalRecord, Alert } from '@/lib/supabase'
 
@@ -60,7 +60,7 @@ export function useDashboard(userId: string | null) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!userId) {
       setLoading(false)
       return
@@ -88,9 +88,10 @@ export function useDashboard(userId: string | null) {
         alerts: alertsResponse,
         pregnancyProgress: pregnancyResponse
       })
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard data';
       console.error('Failed to fetch dashboard data:', err)
-      setError(err.message || 'Failed to load dashboard data')
+      setError(errorMessage)
       
       // Set fallback data for development
       setData({
@@ -133,73 +134,166 @@ export function useDashboard(userId: string | null) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId])
 
   useEffect(() => {
     fetchDashboardData()
-  }, [userId])
+  }, [fetchDashboardData])
 
   const refreshData = () => {
-    setLoading(true)
     fetchDashboardData()
   }
 
-  const addVital = async (vitalData: Omit<VitalRecord, 'id' | 'created_at'>) => {
-    if (!userId) return
-
+  const addVital = async (vital: Record<string, unknown>) => {
     try {
-      const response = await apiService.createVital(vitalData)
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Update local data
-      setData(prev => prev ? {
-        ...prev,
-        vitals: [response, ...prev.vitals]
-      } : null)
+      const newVital: VitalRecord = {
+        id: Date.now().toString(),
+        user_id: userId || '',
+        type: (vital.type as VitalRecord['type']) || 'blood_pressure',
+        value: (vital.value as string) || '',
+        unit: (vital.unit as string) || '',
+        notes: (vital.notes as string) || undefined,
+        recorded_at: new Date().toISOString(),
+        created_at: new Date().toISOString()
+      };
       
-      // Refresh stats
-      const statsResponse = await apiService.getDashboardStats(userId)
-      setData(prev => prev ? {
-        ...prev,
-        stats: statsResponse
-      } : null)
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          vitals: [newVital, ...prev.vitals]
+        };
+      });
       
-      return response
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to add vital')
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding vital:', error);
+      return { success: false, error: 'Failed to add vital' };
     }
-  }
+  };
+
+  const updateVital = async (id: string, updates: Record<string, unknown>) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          vitals: prev.vitals.map(vital => 
+            vital.id === id ? { ...vital, ...updates } : vital
+          )
+        };
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error updating vital:', error);
+      return { success: false, error: 'Failed to update vital' };
+    }
+  };
+
+  const deleteVital = async (id: string) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          vitals: prev.vitals.filter(vital => vital.id !== id)
+        };
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting vital:', error);
+      return { success: false, error: 'Failed to delete vital' };
+    }
+  };
+
+  const addAlert = async (alert: Record<string, unknown>) => {
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const newAlert: Alert = {
+        id: Date.now().toString(),
+        user_id: userId || '',
+        type: (alert.type as Alert['type']) || 'anomaly',
+        severity: (alert.severity as Alert['severity']) || 'low',
+        title: (alert.title as string) || '',
+        message: (alert.message as string) || '',
+        is_read: false,
+        is_resolved: false,
+        metadata: alert.metadata as Record<string, unknown> || undefined,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          alerts: [newAlert, ...prev.alerts]
+        };
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding alert:', error);
+      return { success: false, error: 'Failed to add alert' };
+    }
+  };
 
   const markAlertAsRead = async (alertId: string) => {
     try {
-      await apiService.markAlertAsRead(alertId)
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Update local data
-      setData(prev => prev ? {
-        ...prev,
-        alerts: prev.alerts.map(alert => 
-          alert.id === alertId ? { ...alert, is_read: true } : alert
-        )
-      } : null)
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to mark alert as read')
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          alerts: prev.alerts.map(alert => 
+            alert.id === alertId ? { ...alert, is_read: true } : alert
+          )
+        };
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error marking alert as read:', error);
+      return { success: false, error: 'Failed to mark alert as read' };
     }
-  }
+  };
 
   const resolveAlert = async (alertId: string) => {
     try {
-      await apiService.resolveAlert(alertId)
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Update local data
-      setData(prev => prev ? {
-        ...prev,
-        alerts: prev.alerts.map(alert => 
-          alert.id === alertId ? { ...alert, is_read: true, is_resolved: true } : alert
-        )
-      } : null)
-    } catch (err: any) {
-      throw new Error(err.message || 'Failed to resolve alert')
+      setData(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          alerts: prev.alerts.map(alert => 
+            alert.id === alertId ? { ...alert, is_resolved: true } : alert
+          )
+        };
+      });
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error resolving alert:', error);
+      return { success: false, error: 'Failed to resolve alert' };
     }
-  }
+  };
 
   return {
     data,
@@ -207,6 +301,9 @@ export function useDashboard(userId: string | null) {
     error,
     refreshData,
     addVital,
+    updateVital,
+    deleteVital,
+    addAlert,
     markAlertAsRead,
     resolveAlert
   }

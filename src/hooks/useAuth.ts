@@ -4,12 +4,8 @@ import { useEffect, useState } from 'react'
 import { supabase, type User } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
-interface AuthUser extends User {
-  profile?: any
-}
-
 export function useAuth() {
-  const [user, setUser] = useState<AuthUser | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 

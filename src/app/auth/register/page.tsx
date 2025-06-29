@@ -39,39 +39,45 @@ export default function RegisterPage() {
     }
   }, [user, router])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
 
+    const formData = new FormData(e.currentTarget)
+    const data = {
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      confirmPassword: formData.get('confirmPassword') as string,
+      firstName: formData.get('firstName') as string,
+      lastName: formData.get('lastName') as string,
+      role: formData.get('role') as 'patient' | 'doctor'
+    }
+
     // Validation
-    if (formData.password !== formData.confirmPassword) {
+    if (data.password !== data.confirmPassword) {
       setError('Passwords do not match')
       setIsLoading(false)
       return
     }
 
-    if (formData.password.length < 6) {
+    if (data.password.length < 6) {
       setError('Password must be at least 6 characters long')
       setIsLoading(false)
       return
     }
 
     try {
-      const [firstName, ...lastNameParts] = formData.fullName.trim().split(' ')
-      const lastName = lastNameParts.join(' ')
-
-      await signUp(formData.email, formData.password, {
-        firstName,
-        lastName,
-        role: userRole,
-        phone: formData.phoneNumber,
-        dateOfBirth: formData.dueDate // This would be different for patients vs doctors
+      await signUp(data.email, data.password, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        role: data.role
       })
 
       router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during registration')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred during registration';
+      setError(errorMessage);
     } finally {
       setIsLoading(false)
     }

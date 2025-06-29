@@ -1,0 +1,60 @@
+{
+  "recommendations": [
+    // TypeScript & JavaScript
+    "pmneo.tsimporter",
+    "rbbit.typescript-hero",
+    "xabikos.javascriptsnippets",
+    
+    // React & Next.js
+    "dsznajder.es7-react-js-snippets",
+    "formulahendry.auto-rename-tag",
+    "coenraads.bracket-pair-colorizer-2",
+    
+    // Tailwind CSS
+    "bradlc.vscode-tailwindcss",
+    "heybourn.headwind",
+    "stivo.tailwind-fold",
+    
+    // Code Quality
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "usernamehw.errorlens",
+    "sonarsource.sonarlint-vscode",
+    
+    // Database & API
+    "humao.rest-client",
+    "mtxr.sqltools",
+    "ms-ossdata.vscode-postgresql",
+    
+    // Git & Version Control
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "github.vscode-pull-request-github",
+    
+    // Productivity
+    "formulahendry.auto-close-tag",
+    "formulahendry.auto-complete-tag",
+    "christian-kohler.path-intellisense",
+    "christian-kohler.npm-intellisense",
+    "wix.vscode-import-cost",
+    
+    // Testing
+    "orta.vscode-jest",
+    "firsttris.vscode-jest-runner",
+    "hbenl.vscode-test-explorer",
+    
+    // Themes & UI
+    "equinusocio.vscode-material-theme",
+    "pkief.material-icon-theme",
+    "oderwat.indent-rainbow",
+    
+    // Documentation
+    "yzhang.markdown-all-in-one",
+    "shd101wyy.markdown-preview-enhanced",
+    "aaron-bond.better-comments",
+    
+    // Utilities
+    "mikestead.dotenv",
+    "redhat.vscode-yaml"
+  ]
+}

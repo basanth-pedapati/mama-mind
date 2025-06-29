@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, Eye, EyeOff, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAuth } from '@/hooks/useAuth'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -19,29 +19,39 @@ export default function LoginPage() {
     password: ''
   })
 
-  const { signIn, user } = useAuth()
   const router = useRouter()
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
+  // Demo login handler
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
+
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
+    if (formData.email && formData.password) {
+      toast.success('Login successful!')
+      
+      // Route based on demo email and set localStorage role
+      if (formData.email.includes('doctor') || formData.email.includes('provider')) {
+        localStorage.setItem('demoUserRole', 'doctor')
+        router.push('/dashboard/doctor')
+      } else {
+        localStorage.setItem('demoUserRole', 'patient')
+        router.push('/dashboard/patient')
+      }
+    } else {
+      setError('Please fill in all fields')
+      toast.error('Please fill in all fields')
     }
-  }, [user, router])
+
+    setIsLoading(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    
-    try {
-      await signIn(formData.email, formData.password)
-      router.push('/dashboard')
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login')
-    } finally {
-      setIsLoading(false)
-    }
+    await handleSignIn(e)
   }
 
   return (
@@ -131,6 +141,18 @@ export default function LoginPage() {
             </CardHeader>
             
             <CardContent>
+              {/* Demo Credentials */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="bg-accent/20 border border-accent/40 rounded-lg p-3 mb-6 text-xs"
+              >
+                <p className="font-medium text-secondary mb-1">Demo Credentials:</p>
+                <p>Patient: patient@demo.com / password</p>
+                <p>Doctor: doctor@demo.com / password</p>
+              </motion.div>
+              
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-4">
                   <Input
@@ -204,7 +226,7 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link href="/auth/register" className="text-primary hover:text-primary-dark font-medium transition-colors">
                     Sign up here
                   </Link>

@@ -2,14 +2,14 @@
 @import "tailwindcss";
 
 :root {
-  /* Mama Mind Brand Colors */
-  --primary: 142 202 209;        /* calm teal - #8ECAD1 */
-  --primary-dark: 123 181 188;   /* darker teal for hover states */
-  --secondary: 70 109 119;       /* muted navy - #466D77 */
+  /* Mama Mind MVP Brand Colors */
+  --primary: 142 202 209;        /* teal - #8ECAD1 */
+  --primary-dark: 70 109 119;    /* navy - #466D77 */
+  --secondary: 70 109 119;       /* navy - #466D77 */
   --accent: 248 233 161;         /* soft yellow - #F8E9A1 */
-  --success: 168 213 186;        /* soft green - #A8D5BA */
-  --error: 245 183 161;          /* warm coral - #F5B7A1 */
-  --warning: 245 215 110;        /* gentle yellow warning */
+  --success: 34 197 94;          /* green for success states */
+  --error: 239 68 68;            /* red for errors */
+  --warning: 245 158 11;         /* orange for warnings */
   
   /* Background & Surface Colors */
   --background: 250 250 250;     /* off-white - #FAFAFA */

@@ -43,13 +43,6 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
-  // Format time difference for frequency display
-  const formatFrequency = useCallback((seconds: number): string => {
-    if (seconds < 60) return `${seconds}s ago`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    return `${Math.floor(seconds / 3600)}h ago`;
-  }, []);
-
   // Start contraction
   const startContraction = useCallback(() => {
     const now = new Date();
@@ -328,7 +321,7 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
           </div>
           <p className="text-gray-500 text-sm">
             No contractions recorded yet.<br />
-            Press "Start Contraction" when one begins.
+            Press &ldquo;Start Contraction&rdquo; when one begins.
           </p>
         </motion.div>
       )}

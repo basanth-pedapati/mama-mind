@@ -7,15 +7,12 @@ import {
   Users, 
   AlertTriangle, 
   Calendar,
-  Search,
-  Filter,
-  MoreVertical,
   Phone,
   Mail,
   Activity,
   LogOut,
-  TrendingUp,
-  TrendingDown
+  Search,
+  MoreVertical
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -113,12 +110,11 @@ const mockPatients: Patient[] = [
 
 export default function DoctorDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterRisk, setFilterRisk] = useState<string>('all');
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedRiskFilter, setSelectedRiskFilter] = useState<string>('all');
 
   const filteredPatients = mockPatients.filter(patient => {
     const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRisk = filterRisk === 'all' || patient.riskLevel === filterRisk;
+    const matchesRisk = selectedRiskFilter === 'all' || patient.riskLevel === selectedRiskFilter;
     return matchesSearch && matchesRisk;
   });
 
@@ -252,7 +248,7 @@ export default function DoctorDashboard() {
                     <Calendar className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
-                    <p className="text-sm text-foreground-muted">Today's Appointments</p>
+                    <p className="text-sm text-foreground-muted">Today&apos;s Appointments</p>
                     <p className="text-2xl font-bold text-foreground">{stats.appointmentsToday}</p>
                   </div>
                 </div>
@@ -280,8 +276,8 @@ export default function DoctorDashboard() {
           
           <div className="flex gap-2">
             <select
-              value={filterRisk}
-              onChange={(e) => setFilterRisk(e.target.value)}
+              value={selectedRiskFilter}
+              onChange={(e) => setSelectedRiskFilter(e.target.value)}
               className="px-3 py-2 border border-border rounded-lg text-sm"
             >
               <option value="all">All Risk Levels</option>

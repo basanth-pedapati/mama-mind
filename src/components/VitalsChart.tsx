@@ -47,21 +47,17 @@ const formatDate = (dateStr: string) => {
   });
 };
 
-const getStatusColor = (value: number, type: string, isSecondary = false) => {
-  if (type === 'blood_pressure') {
-    if (isSecondary) { // diastolic
-      if (value < 60) return '#ef4444'; // red
-      if (value > 90) return '#f59e0b'; // amber
-      return '#10b981'; // green
-    } else { // systolic
-      if (value < 90) return '#ef4444'; // red
-      if (value > 140) return '#f59e0b'; // amber
-      return '#10b981'; // green
-    }
-  } else if (type === 'weight') {
-    return '#8ECAD1'; // primary teal
+const formatValue = (value: number, type: string) => {
+  switch (type) {
+    case 'blood_pressure':
+      return `${value} mmHg`;
+    case 'weight':
+      return `${value} kg`;
+    case 'glucose':
+      return `${value} mg/dL`;
+    default:
+      return value.toString();
   }
-  return '#10b981';
 };
 
 export default function VitalsChart({ data = sampleData, type, className = '' }: VitalsChartProps) {
@@ -82,7 +78,7 @@ export default function VitalsChart({ data = sampleData, type, className = '' }:
         />
         <Tooltip 
           formatter={(value: number, name: string) => [
-            `${value} mmHg`,
+            formatValue(value, type),
             name === 'systolic' ? 'Systolic' : 'Diastolic'
           ]}
           labelFormatter={(label) => `Date: ${formatDate(label)}`}
@@ -129,7 +125,7 @@ export default function VitalsChart({ data = sampleData, type, className = '' }:
           fontSize={12}
         />
         <Tooltip 
-          formatter={(value: number) => [`${value} kg`, 'Weight']}
+          formatter={(value: number) => [formatValue(value, type), 'Weight']}
           labelFormatter={(label) => `Date: ${formatDate(label)}`}
           contentStyle={{
             backgroundColor: '#ffffff',

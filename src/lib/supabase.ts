@@ -53,7 +53,7 @@ export type Alert = {
   message: string
   is_read: boolean
   is_resolved: boolean
-  metadata?: any
+  metadata?: Record<string, unknown>
   created_at: string
   updated_at: string
 }
@@ -64,6 +64,38 @@ export type ChatMessage = {
   message: string
   response: string
   message_type: 'question' | 'concern' | 'general'
-  metadata?: any
+  metadata?: Record<string, unknown>
   created_at: string
 }
+
+export const getVitals = async (userId: string): Promise<Record<string, unknown>[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('vitals')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching vitals:', error);
+    return [];
+  }
+};
+
+export const addVital = async (vital: Record<string, unknown>): Promise<Record<string, unknown> | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('vitals')
+      .insert([vital])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error adding vital:', error);
+    return null;
+  }
+};

@@ -1,16 +1,18 @@
-import { type ClassValue, clsx } from "clsx"
+import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-export function cn(...inputs: ClassValue[]) {
+export function cn(...inputs: (string | undefined | null | Record<string, unknown>)[]) {
   return twMerge(clsx(inputs))
 }
 
-export function formatDate(date: Date | string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  })
+export function formatDate(date: string | Date, options?: Record<string, unknown>): string {
+  const defaultOptions: Record<string, unknown> = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  };
+  
+  return new Date(date).toLocaleDateString('en-US', { ...defaultOptions, ...options });
 }
 
 export function formatTime(date: Date | string) {
@@ -52,27 +54,28 @@ export function daysUntilDue(dueDate: string): number {
 }
 
 // Validate vitals ranges
-export function validateVitals(vitals: any): { isValid: boolean; errors: string[] } {
+export function validateVitals(vitals: Record<string, unknown>): { isValid: boolean; errors: string[] } {
   const errors: string[] = []
   
-  if (vitals.bloodPressure) {
-    if (vitals.bloodPressure.systolic < 70 || vitals.bloodPressure.systolic > 200) {
+  if (vitals.bloodPressure && typeof vitals.bloodPressure === 'object' && vitals.bloodPressure !== null) {
+    const bp = vitals.bloodPressure as Record<string, unknown>;
+    if (typeof bp.systolic === 'number' && (bp.systolic < 70 || bp.systolic > 200)) {
       errors.push('Systolic blood pressure should be between 70-200 mmHg')
     }
-    if (vitals.bloodPressure.diastolic < 40 || vitals.bloodPressure.diastolic > 130) {
+    if (typeof bp.diastolic === 'number' && (bp.diastolic < 40 || bp.diastolic > 130)) {
       errors.push('Diastolic blood pressure should be between 40-130 mmHg')
     }
   }
   
-  if (vitals.heartRate && (vitals.heartRate < 50 || vitals.heartRate > 200)) {
+  if (typeof vitals.heartRate === 'number' && (vitals.heartRate < 50 || vitals.heartRate > 200)) {
     errors.push('Heart rate should be between 50-200 BPM')
   }
   
-  if (vitals.weight && vitals.weight < 50) {
+  if (typeof vitals.weight === 'number' && vitals.weight < 50) {
     errors.push('Weight seems unusually low')
   }
   
-  if (vitals.temperature && (vitals.temperature < 95 || vitals.temperature > 105)) {
+  if (typeof vitals.temperature === 'number' && (vitals.temperature < 95 || vitals.temperature > 105)) {
     errors.push('Temperature should be between 95-105°F')
   }
   
@@ -105,7 +108,7 @@ export function getVitalsStatusColor(status: 'normal' | 'warning' | 'critical'):
 export async function apiRequest(
   endpoint: string, 
   options: RequestInit = {}
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
   const token = localStorage.getItem('auth_token')
   
@@ -131,4 +134,15 @@ export async function apiRequest(
   }
   
   return response.json()
+}
+
+export function debounce<T extends (...args: Record<string, unknown>[]) => void>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
 }

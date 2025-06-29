@@ -2,34 +2,26 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
 import { 
   Users, 
   Activity, 
-  AlertTriangle,
-  Search,
-  Filter,
-  Bell,
   Calendar,
-  Stethoscope,
-  TrendingUp,
-  TrendingDown,
+  AlertTriangle,
   User,
-  LogOut,
+  Stethoscope,
   Menu,
   X,
-  Heart,
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  Target,
   BarChart3,
-  FileText,
-  MessageSquare
+  Phone,
+  TrendingUp,
+  Heart,
+  Bell,
+  LogOut,
+  Mail,
+  FileText
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 
@@ -52,14 +44,12 @@ interface Patient {
 }
 
 export default function DoctorDashboard() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRiskFilter, setSelectedRiskFilter] = useState<string>('all');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showPatientDetails, setShowPatientDetails] = useState(false);
-  // Add state for modals
   const [showAppointments, setShowAppointments] = useState(false);
-  const [showEmergencyModal, setShowEmergencyModal] = useState(false);
 
   const [patients] = useState<Patient[]>([
     {
@@ -298,7 +288,7 @@ export default function DoctorDashboard() {
       </motion.header>
       {/* Stats Cards */}
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {statsCards.map((card, idx) => (
+        {statsCards.map((card) => (
           <motion.div
             key={card.title}
             className={`rounded-xl shadow-md p-4 flex items-center gap-4 ${card.bgColor}`}
@@ -369,12 +359,13 @@ export default function DoctorDashboard() {
           initial="hidden"
           animate="visible"
         >
-          {filteredPatients.map(patient => (
+          {filteredPatients.map((patient) => (
             <motion.div
               key={patient.id}
-              className="rounded-xl bg-white shadow-md p-4 flex flex-col gap-2 hover:shadow-lg transition-all cursor-pointer border border-border"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white rounded-xl shadow-lg border border-border hover:shadow-xl transition-all duration-200 cursor-pointer"
               onClick={() => handlePatientClick(patient)}
             >
               <div className="flex items-center gap-3">

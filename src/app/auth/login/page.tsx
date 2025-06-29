@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Heart, Eye, EyeOff, Mail, Lock, ArrowLeft, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -226,7 +226,7 @@ export default function LoginPage() {
                 </Button>
 
                 <div className="text-center text-sm text-muted-foreground">
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link href="/auth/register" className="text-primary hover:text-primary-dark font-medium transition-colors">
                     Sign up here
                   </Link>

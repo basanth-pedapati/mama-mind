@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,6 +21,7 @@ export default function LoginPage() {
   })
 
   const router = useRouter()
+  const { signIn } = useAuth()
 
   // Demo login handler
   const handleSignIn = async (e: React.FormEvent) => {
@@ -27,26 +29,40 @@ export default function LoginPage() {
     setError('')
     setIsLoading(true)
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      // Check if using demo credentials
+      if (formData.email.includes('@demo.com')) {
+        // Simulate API call for demo
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
-    if (formData.email && formData.password) {
-      toast.success('Login successful!')
-      
-      // Route based on demo email and set localStorage role
-      if (formData.email.includes('doctor') || formData.email.includes('provider')) {
-        localStorage.setItem('demoUserRole', 'doctor')
-        router.push('/dashboard/doctor')
+        if (formData.email && formData.password) {
+          toast.success('Login successful!')
+          
+          // Route based on demo email and set localStorage role
+          if (formData.email.includes('doctor') || formData.email.includes('provider')) {
+            localStorage.setItem('demoRole', 'doctor')
+            router.push('/dashboard/doctor')
+          } else {
+            localStorage.setItem('demoRole', 'patient')
+            router.push('/dashboard/patient')
+          }
+        } else {
+          setError('Please fill in all fields')
+          toast.error('Please fill in all fields')
+        }
       } else {
-        localStorage.setItem('demoUserRole', 'patient')
-        router.push('/dashboard/patient')
+        // Real authentication
+        await signIn(formData.email, formData.password)
+        toast.success('Login successful!')
+        // The useAuth hook will handle the role-based routing
       }
-    } else {
-      setError('Please fill in all fields')
-      toast.error('Please fill in all fields')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Login failed'
+      setError(errorMessage)
+      toast.error(errorMessage)
+    } finally {
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

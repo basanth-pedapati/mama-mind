@@ -74,7 +74,13 @@ export default function RegisterPage() {
         role: data.role
       })
 
-      router.push('/dashboard')
+      // Set demo role for routing and redirect to appropriate dashboard
+      localStorage.setItem('demoRole', data.role)
+      if (data.role === 'doctor') {
+        router.push('/dashboard/doctor')
+      } else {
+        router.push('/dashboard/patient')
+      }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred during registration';
       setError(errorMessage);

@@ -17,20 +17,34 @@ export default function ProtectedRoute({
   allowedRoles = ['patient', 'doctor'],
   redirectTo = '/auth/login'
 }: ProtectedRouteProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, getCurrentUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
-      if (!user) {
-        router.push(redirectTo);
-      } else if (allowedRoles.length > 0 && !allowedRoles.includes(user.role as 'patient' | 'doctor')) {
-        // Redirect to appropriate dashboard based on user role
-        const roleRedirect = user.role === 'doctor' ? '/dashboard/doctor' : '/dashboard/patient';
-        router.push(roleRedirect);
+      const currentUser = getCurrentUser();
+      
+      // If we have a user (real or demo)
+      if (currentUser) {
+        console.log('User authenticated with role:', currentUser.role);
+        
+        // Check if user has the required role
+        if (allowedRoles.length > 0 && !allowedRoles.includes(currentUser.role as 'patient' | 'doctor')) {
+          const roleRedirect = currentUser.role === 'doctor' ? '/dashboard/doctor' : '/dashboard/patient';
+          console.log('User role not allowed, redirecting to:', roleRedirect);
+          router.push(roleRedirect);
+          return;
+        }
+        
+        console.log('User authorized for this route');
+        return;
       }
+      
+      // No user found
+      console.log('No user found, redirecting to login');
+      router.push(redirectTo);
     }
-  }, [user, loading, allowedRoles, redirectTo, router]);
+  }, [user, loading, allowedRoles, redirectTo, router, getCurrentUser]);
 
   if (loading) {
     return (
@@ -56,13 +70,11 @@ export default function ProtectedRoute({
     );
   }
 
-  if (!user) {
-    return null; // Will redirect to login
+  // Show content if we have a user with proper role
+  const currentUser = getCurrentUser();
+  if (currentUser && allowedRoles.includes(currentUser.role as 'patient' | 'doctor')) {
+    return <>{children}</>;
   }
 
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.role as 'patient' | 'doctor')) {
-    return null; // Will redirect to appropriate dashboard
-  }
-
-  return <>{children}</>;
+  return null; // Will redirect to login
 } 

@@ -75,7 +75,9 @@ export default function RegisterPage() {
       })
 
       // Set demo role for routing and redirect to appropriate dashboard
-      localStorage.setItem('demoRole', data.role)
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('demoRole', data.role)
+      }
       if (data.role === 'doctor') {
         router.push('/dashboard/doctor')
       } else {

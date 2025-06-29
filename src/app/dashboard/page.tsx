@@ -12,10 +12,16 @@ export default function DashboardPage() {
     if (loading) return; // Wait for auth to load
 
     // Check for demo role in localStorage or user role from auth
-    const demoRole = localStorage.getItem('demoRole') || 
-                    user?.role || 
-                    (user?.email?.includes('doctor') ? 'doctor' : 'patient') ||
-                    'patient';
+    let demoRole = 'patient'; // default
+    
+    if (typeof window !== 'undefined') {
+      demoRole = localStorage.getItem('demoRole') || 
+                 user?.role || 
+                 (user?.email?.includes('doctor') ? 'doctor' : 'patient') ||
+                 'patient';
+    } else {
+      demoRole = user?.role || 'patient';
+    }
     
     // Redirect to appropriate dashboard
     if (demoRole === 'doctor') {

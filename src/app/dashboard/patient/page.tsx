@@ -66,7 +66,7 @@ interface BabyData {
 }
 
 export default function PatientDashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, addToHistory } = useAuth();
   const router = useRouter();
   const [interfaceMode, setInterfaceMode] = useState<'mother' | 'child'>('mother');
   const [showChat, setShowChat] = useState(false);
@@ -123,6 +123,25 @@ export default function PatientDashboard() {
   const gestationalWeek = 28;
   const dueDate = new Date('2024-08-15');
 
+  // Calculate pregnancy progress
+  const calculatePregnancyProgress = () => {
+    const today = new Date();
+    const startDate = new Date(dueDate);
+    startDate.setDate(startDate.getDate() - 280); // 40 weeks = 280 days
+    
+    const totalDays = 280;
+    const daysElapsed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const progress = Math.min(Math.max((daysElapsed / totalDays) * 100, 0), 100);
+    
+    return {
+      progress: Math.round(progress),
+      daysRemaining: Math.max(0, Math.floor((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))),
+      weeksRemaining: Math.ceil(Math.max(0, (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24 * 7)))
+    };
+  };
+
+  const pregnancyProgress = calculatePregnancyProgress();
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -133,6 +152,7 @@ export default function PatientDashboard() {
   };
 
   const handleProfileClick = () => {
+    addToHistory('/profile/patient');
     router.push('/profile/patient');
   };
 
@@ -265,14 +285,14 @@ export default function PatientDashboard() {
     <ProtectedRoute allowedRoles={['patient']}>
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
         {/* Header */}
-      <motion.header 
+        <motion.header 
           className="bg-surface border-b border-border shadow-sm sticky top-0 z-50"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
                 <Heart className="h-8 w-8 text-primary" />
                 <span className="text-xl font-bold text-foreground">Mama Mind</span>
@@ -284,36 +304,64 @@ export default function PatientDashboard() {
                   <p className="text-sm font-medium text-foreground">
                     {user?.profile?.first_name} {user?.profile?.last_name}
                   </p>
-                  <p className="text-xs text-foreground-muted">Patient</p>
+                  <p className="text-xs text-foreground-muted">Week {gestationalWeek}</p>
                 </div>
-                <Button
+                <Button 
                   variant="outline" 
-                  size="sm"
+                  size="sm" 
                   className="hidden sm:flex"
                   onClick={handleProfileClick}
                 >
                   <Settings className="h-4 w-4 mr-2" />
                   Profile
                 </Button>
-                <Button
+                <Button 
                   variant="outline" 
-                  size="sm"
+                  size="sm" 
                   className="hidden sm:flex"
                   onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-              <Button
+                <Button 
                   variant="outline" 
-                size="sm"
+                  size="sm" 
                   className="sm:hidden"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                   <Menu className="h-4 w-4" />
-              </Button>
-          </div>
-        </div>
+                </Button>
+              </div>
+            </div>
+            
+            {/* Pregnancy Progress Bar */}
+            <div className="pb-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center space-x-2">
+                  <Baby className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-medium text-foreground">Pregnancy Progress</span>
+                </div>
+                <span className="text-sm text-foreground-muted">
+                  {pregnancyProgress.weeksRemaining} weeks remaining
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${pregnancyProgress.progress}%` }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full relative"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                </motion.div>
+              </div>
+              <div className="flex justify-between text-xs text-foreground-muted mt-1">
+                <span>Week 1</span>
+                <span className="text-primary font-medium">{pregnancyProgress.progress}%</span>
+                <span>Week 40</span>
+              </div>
+            </div>
           </div>
         </motion.header>
 
@@ -326,23 +374,150 @@ export default function PatientDashboard() {
               exit={{ opacity: 0, height: 0 }}
               className="bg-surface border-b border-border sm:hidden"
             >
-              <div className="px-4 py-3 space-y-2">
-                <div className="text-sm">
+              <div className="px-4 py-6 space-y-4">
+                {/* User Info */}
+                <div className="text-center pb-4 border-b border-border">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="h-8 w-8 text-primary" />
+                  </div>
                   <p className="font-medium text-foreground">
                     {user?.profile?.first_name} {user?.profile?.last_name}
                   </p>
-                  <p className="text-foreground-muted">Patient</p>
+                  <p className="text-sm text-foreground-muted">Week {gestationalWeek}</p>
+                  <Badge variant="outline" className="mt-2">Patient</Badge>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start" 
+                    onClick={() => {
+                      setShowVitalsForm(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Plus className="h-4 w-4 mr-3" />
+                    Add Vitals
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      setShowChat(true);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <MessageCircle className="h-4 w-4 mr-3" />
+                    Chat Assistant
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      handleEmergencyAlert();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <AlertTriangle className="h-4 w-4 mr-3" />
+                    Emergency Alert
+                  </Button>
+                </div>
+
+                {/* Interface Toggle */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">View Mode</h3>
+                  <Button 
+                    variant={interfaceMode === 'mother' ? 'default' : 'outline'}
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      toggleInterfaceMode();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <User className="h-4 w-4 mr-3" />
+                    Maternal View
+                  </Button>
+                  <Button 
+                    variant={interfaceMode === 'child' ? 'default' : 'outline'}
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      toggleInterfaceMode();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Baby className="h-4 w-4 mr-3" />
+                    Baby View
+                  </Button>
+                </div>
+
+                {/* Navigation */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      handleProfileClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Settings className="h-4 w-4 mr-3" />
+                    Profile Settings
+                  </Button>
+                </div>
+
+                {/* Account */}
+                <div className="space-y-2 pt-4 border-t border-border">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start text-red-600 hover:text-red-700"
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Sign Out
+                  </Button>
+                </div>
+
+                {/* Pregnancy Progress (Mobile) */}
+                <div className="pt-4 border-t border-border">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center space-x-2">
+                      <Baby className="h-4 w-4 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Progress</span>
+                    </div>
+                    <span className="text-xs text-foreground-muted">
+                      {pregnancyProgress.weeksRemaining}w left
+                    </span>
                   </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={handleProfileClick}>
-                  <Settings className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-                <Button variant="outline" size="sm" className="w-full" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
+                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pregnancyProgress.progress}%` }}
+                      transition={{ duration: 1, ease: "easeOut" }}
+                      className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                    />
                   </div>
-                </motion.div>
+                  <div className="flex justify-between text-xs text-foreground-muted mt-1">
+                    <span>W1</span>
+                    <span className="text-primary font-medium">{pregnancyProgress.progress}%</span>
+                    <span>W40</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
                 
@@ -417,6 +592,216 @@ export default function PatientDashboard() {
               ))}
               </div>
             </motion.div>
+
+          {/* Vitals Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-6"
+          >
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <CardTitle className="text-xl flex items-center space-x-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      <span>Health Vitals</span>
+                      <Badge variant="outline" className="ml-2">
+                        {interfaceMode === 'mother' ? 'Maternal' : 'Baby'} View
+                      </Badge>
+                    </CardTitle>
+                    <p className="text-sm text-foreground-muted mt-1">
+                      Track your {interfaceMode === 'mother' ? 'maternal' : 'baby'} health metrics
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleInterfaceMode}
+                      className="flex items-center space-x-2"
+                    >
+                      {interfaceMode === 'mother' ? <Baby className="h-4 w-4" /> : <User className="h-4 w-4" />}
+                      <span className="hidden sm:inline">
+                        Switch to {interfaceMode === 'mother' ? 'Baby' : 'Mother'} View
+                      </span>
+                    </Button>
+                    <Button
+                      onClick={() => setShowVitalsForm(true)}
+                      className="bg-primary hover:bg-primary-dark text-secondary"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      <span className="hidden sm:inline">Add Vitals</span>
+                      <span className="sm:hidden">Add</span>
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                {/* Vitals Overview Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                  {interfaceMode === 'mother' ? (
+                    <>
+                      <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/20 dark:to-blue-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">Blood Pressure</p>
+                              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">120/80</p>
+                              <p className="text-xs text-blue-600 dark:text-blue-400">Last: 2 hours ago</p>
+                            </div>
+                            <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full">
+                              <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-green-700 dark:text-green-300">Weight</p>
+                              <p className="text-2xl font-bold text-green-900 dark:text-green-100">68.5 kg</p>
+                              <p className="text-xs text-green-600 dark:text-green-400">Last: 1 day ago</p>
+                            </div>
+                            <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full">
+                              <Scale className="h-6 w-6 text-green-600 dark:text-green-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/20 dark:to-purple-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-purple-700 dark:text-purple-300">Glucose</p>
+                              <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">95 mg/dL</p>
+                              <p className="text-xs text-purple-600 dark:text-purple-400">Last: 3 hours ago</p>
+                            </div>
+                            <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full">
+                              <Stethoscope className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  ) : (
+                    <>
+                      <Card className="bg-gradient-to-br from-pink-50 to-pink-100 dark:from-pink-950/20 dark:to-pink-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-pink-700 dark:text-pink-300">Baby Heart Rate</p>
+                              <p className="text-2xl font-bold text-pink-900 dark:text-pink-100">140 bpm</p>
+                              <p className="text-xs text-pink-600 dark:text-pink-400">Last: 1 hour ago</p>
+                            </div>
+                            <div className="bg-pink-100 dark:bg-pink-900/30 p-2 rounded-full">
+                              <Heart className="h-6 w-6 text-pink-600 dark:text-pink-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-950/20 dark:to-orange-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-orange-700 dark:text-orange-300">Baby Movement</p>
+                              <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">15 kicks</p>
+                              <p className="text-xs text-orange-600 dark:text-orange-400">Last: 30 min ago</p>
+                            </div>
+                            <div className="bg-orange-100 dark:bg-orange-900/30 p-2 rounded-full">
+                              <Baby className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                      
+                      <Card className="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-teal-950/20 dark:to-teal-900/20">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-teal-700 dark:text-teal-300">Estimated Weight</p>
+                              <p className="text-2xl font-bold text-teal-900 dark:text-teal-100">1.1 kg</p>
+                              <p className="text-xs text-teal-600 dark:text-teal-400">Week {gestationalWeek}</p>
+                            </div>
+                            <div className="bg-teal-100 dark:bg-teal-900/30 p-2 rounded-full">
+                              <Scale className="h-6 w-6 text-teal-600 dark:text-teal-400" />
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  )}
+                </div>
+
+                {/* Recent Vitals List */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-foreground">Recent Vitals</h3>
+                    <Button variant="ghost" size="sm" onClick={() => setExpandedSections(prev => 
+                      prev.has('vitals') ? new Set([...prev].filter(s => s !== 'vitals')) : new Set([...prev, 'vitals'])
+                    )}>
+                      {expandedSections.has('vitals') ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                  
+                  <AnimatePresence>
+                    {expandedSections.has('vitals') && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="space-y-2"
+                      >
+                        {vitals
+                          .filter(vital => vital.interface === interfaceMode)
+                          .slice(0, 5)
+                          .map((vital) => (
+                            <motion.div
+                              key={vital.id}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="flex items-center justify-between p-3 bg-surface-light rounded-lg border border-border/50 hover:shadow-sm transition-all duration-200"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <div className={`p-2 rounded-full ${getStatusColor(vital.status)}/10`}>
+                                  {getVitalIcon(vital.type)}
+                                </div>
+                                <div>
+                                  <p className="font-medium text-foreground">{getVitalLabel(vital.type)}</p>
+                                  <p className="text-sm text-foreground-muted">
+                                    {vital.timestamp.toLocaleDateString()} at {vital.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className={`font-semibold ${getStatusColor(vital.status)}`}>{vital.value}</p>
+                                <Badge variant={vital.status === 'normal' ? 'secondary' : vital.status === 'warning' ? 'default' : 'destructive'} className="text-xs">
+                                  {vital.status}
+                                </Badge>
+                              </div>
+                            </motion.div>
+                          ))}
+                        
+                        {vitals.filter(vital => vital.interface === interfaceMode).length === 0 && (
+                          <div className="text-center py-8 text-foreground-muted">
+                            <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                            <p>No {interfaceMode === 'mother' ? 'maternal' : 'baby'} vitals recorded yet</p>
+                            <p className="text-sm">Add your first vital reading to get started</p>
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Main Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

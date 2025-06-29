@@ -203,14 +203,18 @@ export function useAuth() {
     if (demoRole) {
       // Demo user - just clear localStorage
       localStorage.removeItem('demoRole')
-      router.push('/auth/login')
+      clearHistory();
+      // Clear navigation history and go to login
+      router.replace('/auth/login')
       return
     }
 
     // Real user - sign out from Supabase
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-    router.push('/auth/login')
+    clearHistory();
+    // Clear navigation history and go to login
+    router.replace('/auth/login')
   }
 
   const updateProfile = async (updates: Partial<{
@@ -246,6 +250,33 @@ export function useAuth() {
     return data
   }
 
+  // Track navigation history
+  const addToHistory = (path: string) => {
+    if (typeof window === 'undefined') return;
+    
+    const history = JSON.parse(localStorage.getItem('navigationHistory') || '[]');
+    if (history[history.length - 1] !== path) {
+      history.push(path);
+      // Keep only last 10 entries
+      if (history.length > 10) {
+        history.shift();
+      }
+      localStorage.setItem('navigationHistory', JSON.stringify(history));
+    }
+  };
+
+  const getLastPath = (): string => {
+    if (typeof window === 'undefined') return '/dashboard';
+    
+    const history = JSON.parse(localStorage.getItem('navigationHistory') || '[]');
+    return history[history.length - 2] || '/dashboard';
+  };
+
+  const clearHistory = () => {
+    if (typeof window === 'undefined') return;
+    localStorage.removeItem('navigationHistory');
+  };
+
   return {
     user: getCurrentUser(),
     loading,
@@ -255,5 +286,8 @@ export function useAuth() {
     updateProfile,
     getDemoUser,
     getCurrentUser,
+    addToHistory,
+    getLastPath,
+    clearHistory,
   }
 }

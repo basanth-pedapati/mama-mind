@@ -22,16 +22,16 @@ import { Button } from '@/components/ui/button'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
-  userRole?: 'patient' | 'doctor'
-  userName?: string
 }
 
 export default function DashboardLayout({ 
-  children, 
-  userRole = 'patient',
-  userName = 'Sarah Johnson'
+  children
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Default values - these would be determined by the actual user context
+  const userRole = 'patient' // This should come from auth context
+  const userName = 'Sarah Johnson' // This should come from auth context
 
   const patientNavItems = [
     { icon: Activity, label: 'Dashboard', href: '/dashboard/patient', active: true },

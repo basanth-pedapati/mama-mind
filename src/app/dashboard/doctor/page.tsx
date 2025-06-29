@@ -214,21 +214,96 @@ export default function DoctorDashboard() {
               exit={{ opacity: 0, height: 0 }}
               className="bg-surface border-b border-border sm:hidden"
             >
-              <div className="px-4 py-3 space-y-2">
-                <div className="text-sm">
+              <div className="px-4 py-6 space-y-4">
+                {/* User Info */}
+                <div className="text-center pb-4 border-b border-border">
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="h-8 w-8 text-primary" />
+                  </div>
                   <p className="font-medium text-foreground">
                     Dr. {user?.profile?.first_name} {user?.profile?.last_name}
                   </p>
-                  <p className="text-foreground-muted">Obstetrician</p>
+                  <p className="text-sm text-foreground-muted">Obstetrician</p>
+                  <Badge variant="outline" className="mt-2">Provider Portal</Badge>
                 </div>
-                <Button variant="outline" size="sm" className="w-full" onClick={handleProfileClick}>
-                  <Settings className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-                <Button variant="outline" size="sm" className="w-full" onClick={handleSignOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
+
+                {/* Quick Stats */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Today&apos;s Overview</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.totalPatients}</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">Patients</p>
+                    </div>
+                    <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-lg text-center">
+                      <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.alertsToday}</p>
+                      <p className="text-xs text-red-600 dark:text-red-400">Alerts</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      // Add search functionality
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Search className="h-4 w-4 mr-3" />
+                    Search Patients
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      // Add calendar functionality
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Calendar className="h-4 w-4 mr-3" />
+                    View Schedule
+                  </Button>
+                </div>
+
+                {/* Navigation */}
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start"
+                    onClick={() => {
+                      handleProfileClick();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <Settings className="h-4 w-4 mr-3" />
+                    Profile Settings
+                  </Button>
+                </div>
+
+                {/* Account */}
+                <div className="space-y-2 pt-4 border-t border-border">
+                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full justify-start text-red-600 hover:text-red-700"
+                    onClick={() => {
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Sign Out
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}

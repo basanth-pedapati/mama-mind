@@ -263,16 +263,16 @@ export default function PatientDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={['patient']}>
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
         {/* Header */}
-        <motion.header 
+      <motion.header 
           className="bg-surface border-b border-border shadow-sm sticky top-0 z-50"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
                 <Heart className="h-8 w-8 text-primary" />
                 <span className="text-xl font-bold text-foreground">Mama Mind</span>
@@ -286,34 +286,34 @@ export default function PatientDashboard() {
                   </p>
                   <p className="text-xs text-foreground-muted">Patient</p>
                 </div>
-                <Button 
+                <Button
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
                   className="hidden sm:flex"
                   onClick={handleProfileClick}
                 >
                   <Settings className="h-4 w-4 mr-2" />
                   Profile
                 </Button>
-                <Button 
+                <Button
                   variant="outline" 
-                  size="sm" 
+                  size="sm"
                   className="hidden sm:flex"
                   onClick={handleSignOut}
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-                <Button 
+              <Button
                   variant="outline" 
-                  size="sm" 
+                size="sm"
                   className="sm:hidden"
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                   <Menu className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
+              </Button>
+          </div>
+        </div>
           </div>
         </motion.header>
 
@@ -332,7 +332,7 @@ export default function PatientDashboard() {
                     {user?.profile?.first_name} {user?.profile?.last_name}
                   </p>
                   <p className="text-foreground-muted">Patient</p>
-                </div>
+                  </div>
                 <Button variant="outline" size="sm" className="w-full" onClick={handleProfileClick}>
                   <Settings className="h-4 w-4 mr-2" />
                   Profile
@@ -341,15 +341,15 @@ export default function PatientDashboard() {
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
                 </Button>
-              </div>
-            </motion.div>
+                  </div>
+                </motion.div>
           )}
         </AnimatePresence>
-
+                
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Welcome Section */}
-          <motion.div
+                  <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-8"
@@ -372,9 +372,9 @@ export default function PatientDashboard() {
                     <Calendar className="w-3 h-3 mr-1" />
                     Week {gestationalWeek} • Due {dueDate.toLocaleDateString()}
                   </Badge>
-                  <Button
+                    <Button
                     variant="outline"
-                    size="sm"
+                      size="sm"
                     onClick={toggleInterfaceMode}
                     className="flex items-center space-x-2"
                   >
@@ -389,14 +389,14 @@ export default function PatientDashboard() {
                         <span>Switch to Mother View</span>
                       </>
                     )}
-                  </Button>
+                    </Button>
                 </div>
               </div>
             </div>
-          </motion.div>
-          
+                  </motion.div>
+                  
           {/* Quick Actions */}
-          <motion.div
+                  <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
@@ -412,18 +412,18 @@ export default function PatientDashboard() {
                   <div className="flex items-center space-x-3">
                     <action.icon className="w-6 h-6" />
                     <span className="font-semibold">{action.label}</span>
-                  </div>
+                </div>
                 </button>
               ))}
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
 
           {/* Main Dashboard Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left Column - Overview & Vitals */}
             <div className="lg:col-span-2 space-y-6">
               {/* Overview Section */}
-              <motion.div
+        <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
@@ -449,7 +449,7 @@ export default function PatientDashboard() {
                   </CardHeader>
                   <AnimatePresence>
                     {expandedSections.has('overview') && (
-                    <motion.div 
+                  <motion.div 
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
@@ -528,15 +528,15 @@ export default function PatientDashboard() {
                             </div>
                           </div>
                         )}
-                </CardContent>
+            </CardContent>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </Card>
-              </motion.div>
+          </Card>
+        </motion.div>
 
               {/* Vitals Chart */}
-              <motion.div
+        <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -559,10 +559,10 @@ export default function PatientDashboard() {
                         )}
                       </button>
                     </div>
-              </CardHeader>
+            </CardHeader>
                   <AnimatePresence>
                     {expandedSections.has('vitals') && (
-                    <motion.div
+                  <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
@@ -575,11 +575,11 @@ export default function PatientDashboard() {
                     </motion.div>
                   )}
                   </AnimatePresence>
-                </Card>
-              </motion.div>
+          </Card>
+        </motion.div>
 
               {/* Recent Vitals */}
-              <motion.div
+            <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
@@ -590,7 +590,7 @@ export default function PatientDashboard() {
                       <CardTitle className="text-xl font-semibold flex items-center">
                         <Activity className="w-5 h-5 mr-2 text-primary" />
                         Recent {interfaceMode === 'mother' ? 'Maternal' : 'Baby'} Vitals
-                    </CardTitle>
+                  </CardTitle>
                       <button
                         onClick={() => toggleSection('recent')}
                         className="p-1 rounded-md hover:bg-muted"
@@ -602,10 +602,10 @@ export default function PatientDashboard() {
                         )}
                       </button>
                     </div>
-                  </CardHeader>
+                </CardHeader>
                   <AnimatePresence>
                     {expandedSections.has('recent') && (
-                        <motion.div
+                      <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
@@ -614,40 +614,40 @@ export default function PatientDashboard() {
                           <div className="space-y-3">
                             {filteredVitals.slice(0, 5).map((vital) => (
                               <div
-                          key={vital.id}
+                        key={vital.id}
                                 className="flex items-center justify-between p-3 bg-background/50 rounded-lg border border-border"
-                              >
-                                <div className="flex items-center space-x-3">
-                                    {getVitalIcon(vital.type)}
-                                  <div>
+                      >
+                        <div className="flex items-center space-x-3">
+                            {getVitalIcon(vital.type)}
+                          <div>
                                           <p className="font-medium">{getVitalLabel(vital.type)}</p>
                                           <p className="text-sm text-muted-foreground">
-                                      {vital.timestamp.toLocaleString()}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="text-right">
+                              {vital.timestamp.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
                                         <p className="font-semibold">{vital.value}</p>
                                         <Badge className={`text-xs ${getStatusColor(vital.status)}`}>
-                                    {vital.status}
+                            {vital.status}
                                         </Badge>
-                                </div>
+                        </div>
                                     </div>
                                   ))}
-                          </div>
-                        </CardContent>
+                  </div>
+                </CardContent>
                     </motion.div>
                   )}
                   </AnimatePresence>
-                </Card>
-              </motion.div>
-            </div>
+              </Card>
+            </motion.div>
+          </div>
 
             {/* Right Column - Sidebar */}
-            <div className="space-y-6">
+          <div className="space-y-6">
               {/* Baby Info (when in child mode) */}
               {interfaceMode === 'child' && (
-              <motion.div
+            <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
@@ -657,19 +657,19 @@ export default function PatientDashboard() {
                       <CardTitle className="text-xl font-semibold flex items-center text-pink-700">
                         <Baby className="w-5 h-5 mr-2" />
                         Baby Info
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="text-center p-3 bg-white rounded-lg border border-pink-200">
                           <p className="text-sm text-pink-600">Gestational Week</p>
                           <p className="text-xl font-bold text-pink-700">{babyData.gestationalWeek}</p>
-                      </div>
+                    </div>
                         <div className="text-center p-3 bg-white rounded-lg border border-pink-200">
                           <p className="text-sm text-pink-600">Weight</p>
                           <p className="text-xl font-bold text-pink-700">{babyData.estimatedWeight}</p>
-                      </div>
-                      </div>
+                    </div>
+                    </div>
                       <div className="space-y-3">
                         <div className="flex justify-between items-center p-2 bg-white rounded-lg border border-pink-200">
                           <span className="text-sm text-pink-600">Heart Rate</span>
@@ -686,13 +686,13 @@ export default function PatientDashboard() {
                           </span>
                         </div>
                       </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                </CardContent>
+              </Card>
+            </motion.div>
               )}
 
               {/* Emergency Contact */}
-              <motion.div
+            <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -703,23 +703,23 @@ export default function PatientDashboard() {
                       <Phone className="w-5 h-5 mr-2" />
                       Emergency Contact
                     </CardTitle>
-                  </CardHeader>
+                </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="p-3 bg-white rounded-lg border border-red-200">
                       <p className="font-semibold text-red-700">Dr. Emily Johnson</p>
                       <p className="text-sm text-red-600">Obstetrician</p>
                       <p className="text-sm text-red-600">(555) 123-4567</p>
                     </div>
-                      <Button
-                        onClick={handleEmergencyAlert}
+                    <Button
+                      onClick={handleEmergencyAlert}
                       className="w-full bg-red-600 hover:bg-red-700 text-white"
-                      >
+                    >
                       <AlertTriangle className="w-4 h-4 mr-2" />
-                        Emergency Alert
-                      </Button>
+                      Emergency Alert
+                    </Button>
                   </CardContent>
                 </Card>
-                    </motion.div>
+                  </motion.div>
 
               {/* Quick Tips */}
               <motion.div
@@ -751,55 +751,55 @@ export default function PatientDashboard() {
                         }
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           </div>
+        </div>
         </div>
 
         {/* Vitals Form Modal */}
-        <AnimatePresence>
-          {showVitalsForm && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+      <AnimatePresence>
+        {showVitalsForm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
               className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-              onClick={() => setShowVitalsForm(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
+            onClick={() => setShowVitalsForm(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
                 className="bg-background rounded-xl shadow-2xl w-full max-w-md"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-6">
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-lg font-semibold">
                       Log {interfaceMode === 'mother' ? 'Maternal' : 'Baby'} Vitals
                     </h3>
                     <button
-                      onClick={() => setShowVitalsForm(false)}
+                    onClick={() => setShowVitalsForm(false)}
                       className="p-1 rounded-md hover:bg-muted"
-                    >
+                  >
                       <X className="w-4 h-4" />
                     </button>
-                  </div>
-                  <form onSubmit={handleVitalSubmit} className="space-y-4">
-                    <div>
+                </div>
+                <form onSubmit={handleVitalSubmit} className="space-y-4">
+                  <div>
                       <label className="block text-sm font-medium mb-2">Vital Type</label>
-                      <select
-                        value={vitalForm.type}
+                    <select
+                      value={vitalForm.type}
                         onChange={(e) => setVitalForm(prev => ({ ...prev, type: e.target.value as Vital['type'] }))}
                         className="w-full p-3 border border-border rounded-lg bg-background"
-                      >
+                    >
                         {interfaceMode === 'mother' ? (
                           <>
-                        <option value="blood_pressure">Blood Pressure</option>
-                        <option value="weight">Weight</option>
-                        <option value="glucose">Glucose</option>
+                      <option value="blood_pressure">Blood Pressure</option>
+                      <option value="weight">Weight</option>
+                      <option value="glucose">Glucose</option>
                             <option value="temperature">Temperature</option>
                           </>
                         ) : (
@@ -809,52 +809,52 @@ export default function PatientDashboard() {
                             <option value="baby_movement">Baby Movement</option>
                           </>
                         )}
-                      </select>
-                    </div>
+                    </select>
+                  </div>
 
-                    {vitalForm.type === 'blood_pressure' && (
+                  {vitalForm.type === 'blood_pressure' && (
                       <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-sm font-medium mb-2">Systolic</label>
-                          <Input
-                            type="number"
-                            placeholder="120"
-                            value={vitalForm.systolic}
-                            onChange={(e) => setVitalForm(prev => ({ ...prev, systolic: e.target.value }))}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium mb-2">Diastolic</label>
-                          <Input
-                            type="number"
-                            placeholder="80"
-                            value={vitalForm.diastolic}
-                            onChange={(e) => setVitalForm(prev => ({ ...prev, diastolic: e.target.value }))}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {vitalForm.type === 'weight' && (
                       <div>
-                        <label className="block text-sm font-medium mb-2">Weight (kg)</label>
+                        <label className="block text-sm font-medium mb-2">Systolic</label>
                         <Input
                           type="number"
-                          step="0.1"
-                          placeholder="68.5"
-                          value={vitalForm.weight}
-                          onChange={(e) => setVitalForm(prev => ({ ...prev, weight: e.target.value }))}
+                          placeholder="120"
+                          value={vitalForm.systolic}
+                            onChange={(e) => setVitalForm(prev => ({ ...prev, systolic: e.target.value }))}
                         />
                       </div>
-                    )}
-
-                    {vitalForm.type === 'glucose' && (
                       <div>
-                        <label className="block text-sm font-medium mb-2">Glucose (mg/dL)</label>
+                        <label className="block text-sm font-medium mb-2">Diastolic</label>
                         <Input
                           type="number"
-                          placeholder="95"
-                          value={vitalForm.glucose}
+                          placeholder="80"
+                          value={vitalForm.diastolic}
+                            onChange={(e) => setVitalForm(prev => ({ ...prev, diastolic: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {vitalForm.type === 'weight' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Weight (kg)</label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        placeholder="68.5"
+                        value={vitalForm.weight}
+                          onChange={(e) => setVitalForm(prev => ({ ...prev, weight: e.target.value }))}
+                      />
+                    </div>
+                  )}
+
+                  {vitalForm.type === 'glucose' && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Glucose (mg/dL)</label>
+                      <Input
+                        type="number"
+                        placeholder="95"
+                        value={vitalForm.glucose}
                           onChange={(e) => setVitalForm(prev => ({ ...prev, glucose: e.target.value }))}
                         />
                       </div>
@@ -893,37 +893,37 @@ export default function PatientDashboard() {
                           placeholder="15"
                           value={vitalForm.babyMovement}
                           onChange={(e) => setVitalForm(prev => ({ ...prev, babyMovement: e.target.value }))}
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex space-x-3 pt-4">
-e                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setShowVitalsForm(false)}
-                        className="flex-1"
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" className="flex-1">
-                        Save Vitals
-                      </Button>
+                      />
                     </div>
-                  </form>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                  )}
 
-        {/* Chat Assistant */}
-        <AnimatePresence>
-          {showChat && (
+                  <div className="flex space-x-3 pt-4">
+e                      <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowVitalsForm(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" className="flex-1">
+                        Save Vitals
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Chat Assistant */}
+      <AnimatePresence>
+        {showChat && (
             <ChatAssistant onClose={() => setShowChat(false)} />
-          )}
-        </AnimatePresence>
-      </div>
+        )}
+      </AnimatePresence>
+              </div>
     </ProtectedRoute>
   );
 }

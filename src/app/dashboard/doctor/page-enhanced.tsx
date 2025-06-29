@@ -65,7 +65,7 @@ const mockPatients: Patient[] = [
       status: 'normal'
     },
     alerts: 0,
-    phone: '+1 (555) 123-4567',
+      phone: '+1 (555) 123-4567',
     email: 'sarah.johnson@email.com',
     address: '123 Oak Street, Portland, OR 97201',
     emergencyContact: 'Mike Johnson (Husband) - +1 (555) 123-4568',
@@ -271,7 +271,7 @@ export default function DoctorDashboardEnhanced() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-          >
+                >
             <Card className="h-full">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center">
@@ -402,7 +402,7 @@ export default function DoctorDashboardEnhanced() {
                     transition={{ delay: index * 0.1 }}
                     className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
                     onClick={() => setSelectedPatient(patient)}
-                  >
+            >
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
                       {/* Patient Info */}
                 <div className="flex-1 min-w-0">

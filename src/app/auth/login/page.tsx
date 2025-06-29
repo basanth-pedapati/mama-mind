@@ -40,21 +40,32 @@ export default function LoginPage() {
           
           // Route based on demo email and set localStorage role
           if (formData.email.includes('doctor') || formData.email.includes('provider')) {
-            localStorage.setItem('demoRole', 'doctor')
-            router.push('/dashboard/doctor')
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('demoRole', 'doctor')
+            }
+            console.log('Redirecting to doctor dashboard...')
+            // Small delay to ensure localStorage is set
+            await new Promise(resolve => setTimeout(resolve, 100))
+            // Use replace instead of push to avoid navigation issues
+            router.replace('/dashboard/doctor')
           } else {
-            localStorage.setItem('demoRole', 'patient')
-            router.push('/dashboard/patient')
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('demoRole', 'patient')
+            }
+            console.log('Redirecting to patient dashboard...')
+            // Small delay to ensure localStorage is set
+            await new Promise(resolve => setTimeout(resolve, 100))
+            // Use replace instead of push to avoid navigation issues
+            router.replace('/dashboard/patient')
           }
         } else {
           setError('Please fill in all fields')
           toast.error('Please fill in all fields')
         }
       } else {
-        // Real authentication
+        // Real authentication - let useAuth handle the routing
         await signIn(formData.email, formData.password)
         toast.success('Login successful!')
-        // The useAuth hook will handle the role-based routing
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'Login failed'

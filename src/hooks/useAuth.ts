@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { supabase, type User } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 
@@ -8,6 +8,39 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const hasRedirected = useRef(false)
+
+  // Check for demo user
+  const getDemoUser = (): User | null => {
+    // Only access localStorage on the client side
+    if (typeof window === 'undefined') return null;
+    
+    const demoRole = localStorage.getItem('demoRole')
+    if (demoRole) {
+      return {
+        id: 'demo-user-id',
+        email: demoRole === 'doctor' ? 'doctor@demo.com' : 'patient@demo.com',
+        role: demoRole as 'patient' | 'doctor',
+        created_at: new Date().toISOString(),
+        profile: {
+          id: 'demo-profile-id',
+          user_id: 'demo-user-id',
+          first_name: demoRole === 'doctor' ? 'Dr. Sarah' : 'Emily',
+          last_name: demoRole === 'doctor' ? 'Johnson' : 'Davis',
+          phone: '+1 (555) 123-4567',
+          date_of_birth: '1990-01-01',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+      }
+    }
+    return null
+  }
+
+  // Get current user (real or demo)
+  const getCurrentUser = (): User | null => {
+    return user || getDemoUser()
+  }
 
   useEffect(() => {
     // Get initial session
@@ -22,13 +55,31 @@ export function useAuth() {
           .eq('user_id', session.user.id)
           .single()
 
-        setUser({
+        const userData = {
           id: session.user.id,
           email: session.user.email!,
           role: session.user.user_metadata?.role || 'patient',
           created_at: session.user.created_at!,
           profile
-        })
+        }
+
+        setUser(userData)
+
+        // Set demo role for routing
+        const role = userData.role
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('demoRole', role)
+        }
+        
+        // Only redirect for real authentication (not demo)
+        if (!session.user.email?.includes('@demo.com') && !hasRedirected.current) {
+          hasRedirected.current = true
+          if (role === 'doctor') {
+            router.replace('/dashboard/doctor')
+          } else {
+            router.replace('/dashboard/patient')
+          }
+        }
       }
       
       setLoading(false)
@@ -57,19 +108,27 @@ export function useAuth() {
 
         setUser(userData)
 
-        // Set demo role for routing and redirect to appropriate dashboard
+        // Set demo role for routing
         const role = userData.role
-        localStorage.setItem('demoRole', role)
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('demoRole', role)
+        }
         
-        // Redirect to appropriate dashboard
-        if (role === 'doctor') {
-          router.push('/dashboard/doctor')
-        } else {
-          router.push('/dashboard/patient')
+        // Only redirect for real authentication (not demo)
+        if (!session.user.email?.includes('@demo.com') && !hasRedirected.current) {
+          hasRedirected.current = true
+          if (role === 'doctor') {
+            router.replace('/dashboard/doctor')
+          } else {
+            router.replace('/dashboard/patient')
+          }
         }
       } else if (event === 'SIGNED_OUT') {
         setUser(null)
-        localStorage.removeItem('demoRole')
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('demoRole')
+        }
+        hasRedirected.current = false
       }
       setLoading(false)
     })
@@ -137,6 +196,18 @@ export function useAuth() {
   }
 
   const signOut = async () => {
+    // Check if it's a demo user
+    if (typeof window === 'undefined') return;
+    
+    const demoRole = localStorage.getItem('demoRole')
+    if (demoRole) {
+      // Demo user - just clear localStorage
+      localStorage.removeItem('demoRole')
+      router.push('/auth/login')
+      return
+    }
+
+    // Real user - sign out from Supabase
     const { error } = await supabase.auth.signOut()
     if (error) throw error
     router.push('/auth/login')
@@ -176,11 +247,13 @@ export function useAuth() {
   }
 
   return {
-    user,
+    user: getCurrentUser(),
     loading,
     signIn,
     signUp,
     signOut,
     updateProfile,
+    getDemoUser,
+    getCurrentUser,
   }
 }

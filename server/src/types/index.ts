@@ -12,9 +12,20 @@ declare module 'fastify' {
   }
 }
 
+// Extend FastifyJWT user type instead of FastifyRequest
+declare module '@fastify/jwt' {
+  interface FastifyJWT {
+    user: {
+      id: string;
+      email: string;
+      role: string;
+    }
+  }
+}
+
 // Custom request interface with user data
 export interface AuthenticatedRequest extends FastifyRequest {
-  user?: {
+  user: {
     id: string;
     email: string;
     role: string;

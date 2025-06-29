@@ -9,11 +9,11 @@ const server = Fastify({
 
 async function start() {
   try {
-    // Test importing chat-test routes
-    console.log('Testing chat-test routes import...');
-    const chatModule = await import('./routes/chat-test.js');
-    console.log('Chat-test module:', chatModule);
-    console.log('Chat-test module default:', chatModule.default);
+    // Test importing chat routes
+    console.log('Testing chat routes import...');
+    const chatModule = await import('./routes/chat.js');
+    console.log('Chat module:', chatModule);
+    console.log('Chat module default:', chatModule.default);
     console.log('Type of default:', typeof chatModule.default);
     
     // Try to register it

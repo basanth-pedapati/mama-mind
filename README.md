@@ -2,30 +2,39 @@
 
 A full-stack maternity care web application built for expecting mothers and healthcare providers. Featuring real-time vitals tracking, AI-powered assistance, beautiful UI, and comprehensive pregnancy management tools.
 
+## 🎯 MVP Demo Ready!
+
+**Hackathon-ready MVP with demo credentials:**
+- **Patient Demo:** `patient@demo.com` / `demo123`
+- **Doctor Demo:** `doctor@demo.com` / `demo123`
+- **Live Demo:** [mama-mind.vercel.app](https://mama-mind.vercel.app)
+
 ## ✨ Features
 
-- 📊 **Real-time Vitals Tracking** - Blood pressure, weight, heart rate, baby movement
-- 🤖 **AI-Powered Chat Assistant** - 24/7 support with intelligent triage
-- 📱 **Responsive Dashboard** - Beautiful, mobile-first design with animations
+- 📊 **Real-time Vitals Tracking** - Blood pressure, weight, heart rate, baby movement with beautiful charts
+- 🤖 **AI-Powered Chat Assistant** - 24/7 pregnancy support with intelligent medical guidance
+- 📱 **Responsive Dashboard** - Beautiful, mobile-first design with Framer Motion animations
 - 👩‍⚕️ **Role-based Access** - Separate dashboards for patients and doctors
-- 🔔 **Smart Alerts** - Automated health monitoring and notifications
-- 📈 **Pregnancy Progress** - Week-by-week tracking with milestones
-- 🗂️ **File Management** - Upload and manage medical records
-- 🔐 **Secure Authentication** - Powered by Supabase with RLS
+- 🔔 **Smart Alerts** - Automated health monitoring and emergency notifications
+- 📈 **Pregnancy Progress** - Week-by-week tracking with gestational milestones
+- 🎨 **Clinical Branding** - Professional teal/navy theme with accessibility focus
+- 🔐 **Secure Authentication** - Powered by Supabase with Row Level Security
 
 ## 🚀 Quick Start
 
-**New to the project? Start here:**
-
-👉 **[QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes!
+**Demo the MVP:**
+1. Visit the live demo or run locally: `npm run dev`
+2. Login with demo credentials above
+3. Experience patient or doctor dashboard
+4. Test vitals logging, AI chat, and emergency alerts
 
 **For developers:**
 
+👉 **[QUICKSTART.md](./QUICKSTART.md)** - Get up and running in 5 minutes!
+
 🛠️ **[DEVELOPER-GUIDE.md](./DEVELOPER-GUIDE.md)** - Complete development setup and workflow  
 🎨 **[Frontend Guide](./src/FRONTEND-GUIDE.md)** - React/Next.js development  
-🚀 **[Backend Guide](./server/BACKEND-GUIDE.md)** - Fastify/Node.js development  
-🤝 **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to the project  
-📋 **[TEAM-TEMPLATES.md](./TEAM-TEMPLATES.md)** - Communication templates and workflows
+🚀 **[Backend Guide](./server/BACKEND-GUIDE.md)** - Fastify/Node.js development
 
 ```bash
 # Quick developer setup

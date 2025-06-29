@@ -25,6 +25,7 @@
     "setup:dev": "node setup-dev.js",
     "env:setup": "node scripts/setup-env.js",
     "env:test": "node scripts/validate-env.js",
+    "services:test": "node scripts/test-services.js",
     "dev:check": "npm run env:test && npm run dev:all",
     "db:test": "node database/test-connection.js",
     "db:migrate": "echo 'Run the SQL files in your Supabase dashboard'",

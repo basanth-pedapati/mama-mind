@@ -62,12 +62,16 @@ async function start() {
     await server.register(uploadRoutes, { prefix: '/api/upload' });
     await server.register(analyticsRoutes, { prefix: '/api/analytics' });
 
-    const host = process.env.HOST || 'localhost';
-    const port = parseInt(process.env.PORT || '3001');
-    
-    await server.listen({ host, port });
-    server.log.info(`🚀 Mama Mind Server running at http://${host}:${port}`);
-    server.log.info(`📊 Health check available at http://${host}:${port}/health`);
+    const port = parseInt(process.env.PORT || '3000', 10);
+
+    server.listen({ port, host: '0.0.0.0' }, (err, address) => {
+      if (err) {
+        console.error(err);
+        process.exit(1);
+      }
+      console.log(`🚀 Server running at ${address}`);
+      console.log(`📊 Health check available at ${address}/health`);
+    });
     
   } catch (error) {
     server.log.error('Error starting server:', error);

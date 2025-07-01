@@ -1,40 +1,14 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-const cardVariants = cva(
-  "rounded-xl border bg-surface text-foreground shadow-sm transition-all duration-200",
-  {
-    variants: {
-      variant: {
-        default: "border-border",
-        outline: "border-2 border-primary",
-        gradient: "bg-gradient-to-br from-surface to-surface-light",
-        elevated: "shadow-lg hover:shadow-xl border-border/50 hover:border-primary/20",
-        medical: "border-primary/20 bg-surface shadow-md hover:shadow-lg",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
-
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, variant, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(cardVariants({ variant, className }))}
-      {...props}
-    />
-  )
-)
-Card.displayName = "Card"
+export function Card({ children, className = '', ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("bg-surface rounded-2xl shadow-md p-6", className)} {...props}>
+      {children}
+    </div>
+  );
+}
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -55,7 +29,7 @@ const CardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-xl font-semibold leading-none tracking-tight",
+      "text-xl font-heading text-primary font-semibold leading-none tracking-tight",
       className
     )}
     {...props}
@@ -69,7 +43,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-sm font-body text-secondary", className)}
     {...props}
   />
 ))
@@ -95,4 +69,4 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

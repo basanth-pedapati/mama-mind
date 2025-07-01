@@ -28,10 +28,10 @@ export function VitalsCard({ vitals, title = "Current Vitals" }: VitalsCardProps
       indicator: "bg-success"
     },
     warning: {
-      bg: "bg-warning/10", 
-      border: "border-warning/20",
-      text: "text-warning",
-      indicator: "bg-warning"
+      bg: "bg-accent/10", 
+      border: "border-accent/20",
+      text: "text-accent",
+      indicator: "bg-accent"
     },
     critical: {
       bg: "bg-error/10",
@@ -48,9 +48,9 @@ export function VitalsCard({ vitals, title = "Current Vitals" }: VitalsCardProps
   }
 
   return (
-    <Card className="bg-gradient-medical border-primary/20 hover:border-primary/40 transition-all duration-300">
+    <Card className="bg-surface border-primary/20 hover:border-primary/40 transition-all duration-300">
       <CardHeader className="pb-4">
-        <CardTitle className="text-xl text-secondary flex items-center space-x-2">
+        <CardTitle className="text-xl font-heading text-secondary flex items-center space-x-2">
           <Activity className="h-5 w-5 text-primary animate-pulse-soft" />
           <span>{title}</span>
         </CardTitle>
@@ -82,7 +82,7 @@ export function VitalsCard({ vitals, title = "Current Vitals" }: VitalsCardProps
                     >
                       <vital.icon className={`h-5 w-5 ${style.text}`} />
                     </motion.div>
-                    <span className="text-sm font-medium text-secondary">{vital.name}</span>
+                    <span className="text-sm font-body text-secondary">{vital.name}</span>
                   </div>
                   
                   <div className="flex items-center space-x-1">
@@ -96,25 +96,25 @@ export function VitalsCard({ vitals, title = "Current Vitals" }: VitalsCardProps
                 </div>
                 
                 <div className="mb-2">
-                  <span className="text-2xl font-bold text-foreground">{vital.value}</span>
-                  <span className="text-sm text-muted-foreground ml-1">{vital.unit}</span>
+                  <span className="text-2xl font-heading font-bold text-primary">{vital.value}</span>
+                  <span className="text-sm font-body text-secondary ml-1">{vital.unit}</span>
                 </div>
                 
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-xs">
-                    <span className="text-muted-foreground">Normal: {vital.normalRange}</span>
-                    <span className={`font-medium capitalize ${style.text}`}>
+                    <span className="text-secondary font-body">Normal: {vital.normalRange}</span>
+                    <span className={`font-medium capitalize font-body ${style.text}`}>
                       {vital.status}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-secondary font-body">
                     Updated {vital.lastUpdated}
                   </div>
                 </div>
                 
                 {/* Progress bar for normal range visualization */}
                 <div className="mt-3">
-                  <div className="h-1 bg-surface-light rounded-full overflow-hidden">
+                  <div className="h-1 bg-surface rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: vital.status === "normal" ? "80%" : vital.status === "warning" ? "60%" : "30%" }}
@@ -133,13 +133,13 @@ export function VitalsCard({ vitals, title = "Current Vitals" }: VitalsCardProps
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 p-3 bg-surface/50 rounded-lg border border-border/50"
+          className="mt-6 p-3 bg-surface rounded-lg border border-border/50"
         >
           <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Overall Status</span>
-            <span className={`font-medium ${
+            <span className="text-secondary font-body">Overall Status</span>
+            <span className={`font-medium font-body ${
               vitals.every(v => v.status === "normal") ? "text-success" :
-              vitals.some(v => v.status === "critical") ? "text-error" : "text-warning"
+              vitals.some(v => v.status === "critical") ? "text-error" : "text-accent"
             }`}>
               {vitals.every(v => v.status === "normal") ? "All Normal" :
                vitals.some(v => v.status === "critical") ? "Needs Attention" : "Monitor Closely"}
@@ -179,7 +179,7 @@ export const sampleVitals: VitalSign[] = [
     id: "temp",
     name: "Temperature",
     value: "98.6",
-    unit: "°F",
+    unit: "\u00b0F",
     status: "normal", 
     trend: "stable",
     icon: Thermometer,

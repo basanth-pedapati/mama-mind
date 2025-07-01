@@ -104,11 +104,11 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
   };
 
   return (
-    <div className={`max-w-md mx-auto p-6 bg-white rounded-2xl shadow-lg ${className}`}>
+    <div className={`max-w-md mx-auto p-6 bg-surface rounded-2xl shadow-md ${className}`}>
       {/* Header */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Contraction Timer</h2>
-        <p className="text-gray-600 text-sm">Track your contractions during labor</p>
+        <h2 className="text-2xl font-heading font-bold text-primary mb-2">Contraction Timer</h2>
+        <p className="text-secondary text-sm font-body">Track your contractions during labor</p>
       </div>
 
       {/* Main Timer Display */}
@@ -125,11 +125,11 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
               className="space-y-4"
             >
               {/* Current Timer */}
-              <div className="bg-pink-50 rounded-xl p-6 border-2 border-pink-200">
-                <div className="text-4xl font-mono font-bold text-pink-600 mb-2">
+              <div className="bg-accent/20 rounded-xl p-6 border-2 border-accent/40">
+                <div className="text-4xl font-mono font-bold text-accent mb-2">
                   {formatTime(currentTime)}
                 </div>
-                <div className="text-pink-500 text-sm font-medium">
+                <div className="text-accent text-sm font-body font-medium">
                   Contraction in progress...
                 </div>
               </div>
@@ -138,7 +138,7 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
               <motion.div
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-4 h-4 bg-pink-400 rounded-full mx-auto"
+                className="w-4 h-4 bg-accent rounded-full mx-auto"
               />
             </motion.div>
           ) : (
@@ -149,12 +149,12 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
               animate="animate"
               exit="exit"
               transition={{ duration: 0.3 }}
-              className="bg-gray-50 rounded-xl p-6 border-2 border-gray-200"
+              className="bg-surface rounded-xl p-6 border-2 border-surface"
             >
-              <div className="text-4xl font-mono font-bold text-gray-400 mb-2">
+              <div className="text-4xl font-mono font-bold text-secondary mb-2">
                 00:00
               </div>
-              <div className="text-gray-500 text-sm">
+              <div className="text-secondary text-sm font-body">
                 Ready to time contraction
               </div>
             </motion.div>
@@ -171,11 +171,11 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
           onClick={isActive ? endContraction : startContraction}
           disabled={false}
           className={`
-            w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-200
+            w-full py-4 px-6 rounded-xl font-heading font-semibold text-lg transition-all duration-200
             focus:outline-none focus:ring-4 focus:ring-offset-2
             ${isActive 
-              ? 'bg-red-500 hover:bg-red-600 text-white focus:ring-red-300 shadow-lg shadow-red-200' 
-              : 'bg-pink-500 hover:bg-pink-600 text-white focus:ring-pink-300 shadow-lg shadow-pink-200'
+              ? 'bg-error hover:bg-error/90 text-white focus:ring-error/30 shadow-md' 
+              : 'bg-primary hover:bg-primary/90 text-white focus:ring-primary/30 shadow-md'
             }
           `}
           aria-label={isActive ? 'End contraction' : 'Start contraction'}
@@ -190,9 +190,9 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
             whileTap="pressed"
             onClick={clearHistory}
             className="
-              w-full py-2 px-4 rounded-lg font-medium text-gray-600 
-              bg-gray-100 hover:bg-gray-200 transition-all duration-200
-              focus:outline-none focus:ring-4 focus:ring-gray-300 focus:ring-offset-2
+              w-full py-2 px-4 rounded-lg font-body font-medium text-secondary 
+              bg-surface hover:bg-surface/80 transition-all duration-200
+              focus:outline-none focus:ring-4 focus:ring-primary/10 focus:ring-offset-2
             "
             aria-label="Clear contraction history"
           >
@@ -201,138 +201,38 @@ const ContractionTimer: React.FC<ContractionTimerProps> = ({ className = '' }) =
         )}
       </div>
 
-      {/* Contractions History */}
+      {/* Contraction History */}
       {contractions.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Contractions</h3>
-            <span className="text-sm text-gray-500">
-              {contractions.length} recorded
-            </span>
-          </div>
-
-          {/* Summary Stats */}
-          {contractions.length >= 2 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-blue-50 rounded-lg p-4 border border-blue-200"
-            >
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
-                  <div className="text-lg font-bold text-blue-600">
-                    {formatTime(Math.floor(
-                      contractions.slice(-5).reduce((sum, c) => sum + c.duration, 0) / 
-                      Math.min(contractions.length, 5)
-                    ))}
-                  </div>
-                  <div className="text-xs text-blue-500">Avg Duration</div>
-                </div>
-                <div>
-                  <div className="text-lg font-bold text-blue-600">
-                    {contractions[contractions.length - 1].frequency 
-                      ? formatTime(contractions[contractions.length - 1].frequency!) 
-                      : '--'
-                    }
-                  </div>
-                  <div className="text-xs text-blue-500">Last Frequency</div>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Contractions List */}
-          <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="mt-8">
+          <h3 className="text-lg font-heading font-semibold text-primary mb-4">Recent Contractions</h3>
+          <div className="space-y-3">
             <AnimatePresence>
-              {contractions.slice(-10).reverse().map((contraction, index) => (
+              {contractions.slice(-5).reverse().map((c) => (
                 <motion.div
-                  key={contraction.id}
+                  key={c.id}
                   variants={contractionVariants}
                   initial="initial"
                   animate="animate"
                   exit="exit"
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                  transition={{ duration: 0.3 }}
+                  className="bg-background rounded-lg p-4 border border-surface"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <div className="text-sm font-medium text-gray-900">
-                          Duration: {formatTime(contraction.duration)}
-                        </div>
-                        {contraction.frequency && (
-                          <div className="text-xs text-gray-500">
-                            Frequency: {formatTime(contraction.frequency)}
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        {contraction.startTime.toLocaleTimeString([], { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </div>
-                    </div>
-                    
-                    {/* Intensity indicator based on duration */}
-                    <div className="flex space-x-1">
-                      {[1, 2, 3].map((level) => (
-                        <div
-                          key={level}
-                          className={`
-                            w-2 h-6 rounded-full
-                            ${contraction.duration >= level * 20 
-                              ? level === 1 ? 'bg-green-400' 
-                                : level === 2 ? 'bg-yellow-400' 
-                                : 'bg-red-400'
-                              : 'bg-gray-200'
-                            }
-                          `}
-                          aria-label={`Intensity level ${level}`}
-                        />
-                      ))}
-                    </div>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-secondary font-body text-sm">Duration</span>
+                    <span className="text-primary font-heading font-bold text-lg">{formatTime(c.duration)}</span>
                   </div>
+                  {c.frequency !== undefined && (
+                    <div className="flex justify-between items-center">
+                      <span className="text-secondary font-body text-xs">Since last</span>
+                      <span className="text-accent font-heading font-semibold text-base">{formatTime(c.frequency)}</span>
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </AnimatePresence>
           </div>
-
-          {contractions.length > 10 && (
-            <div className="text-center text-xs text-gray-400">
-              Showing last 10 contractions
-            </div>
-          )}
         </div>
       )}
-
-      {/* Empty State */}
-      {contractions.length === 0 && !isActive && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center py-8"
-        >
-          <div className="text-gray-400 mb-2">
-            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <p className="text-gray-500 text-sm">
-            No contractions recorded yet.<br />
-            Press &ldquo;Start Contraction&rdquo; when one begins.
-          </p>
-        </motion.div>
-      )}
-
-      {/* Accessibility Instructions */}
-      <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {isActive && `Contraction timer running: ${formatTime(currentTime)}`}
-        {!isActive && contractions.length > 0 && 
-          `Last contraction: ${formatTime(contractions[contractions.length - 1].duration)} duration`
-        }
-      </div>
     </div>
   );
 };

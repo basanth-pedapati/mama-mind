@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -28,27 +29,27 @@ export default function DashboardLayout({
   children
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const pathname = usePathname();
 
   // Default values - these would be determined by the actual user context
   const userRole = 'patient' // This should come from auth context
   const userName = 'Sarah Johnson' // This should come from auth context
 
   const patientNavItems = [
-    { icon: Activity, label: 'Dashboard', href: '/dashboard/patient', active: true },
-    { icon: Heart, label: 'Vitals', href: '/dashboard/vitals' },
-    { icon: Baby, label: 'Pregnancy Progress', href: '/dashboard/progress' },
-    { icon: Calendar, label: 'Appointments', href: '/dashboard/appointments' },
-    { icon: MessageCircle, label: 'Chat with AI', href: '/dashboard/chat' },
-    { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
+    { icon: Activity, label: 'Dashboard', href: '/dashboard/patient' },
+    { icon: Heart, label: 'Vitals', href: '/vitals' },
+    { icon: Baby, label: 'Pregnancy Progress', href: '/pregnancy-progress' },
+    { icon: Calendar, label: 'Appointments', href: '/appointments' },
+    { icon: MessageCircle, label: 'Chat with AI', href: '/chat' },
+    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
     { icon: User, label: 'Profile', href: '/profile/patient' },
   ]
 
   const doctorNavItems = [
-    { icon: Activity, label: 'Dashboard', href: '/dashboard/doctor', active: true },
+    { icon: Activity, label: 'Dashboard', href: '/dashboard/doctor' },
     { icon: Stethoscope, label: 'Patients', href: '/dashboard/patients' },
-    { icon: Calendar, label: 'Appointments', href: '/dashboard/appointments' },
-    { icon: Bell, label: 'Alerts', href: '/dashboard/alerts' },
-    { icon: BarChart3, label: 'Analytics', href: '/dashboard/analytics' },
+    { icon: Calendar, label: 'Appointments', href: '/appointments' },
+    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
     { icon: User, label: 'Profile', href: '/profile/doctor' },
   ]
 
@@ -114,28 +115,33 @@ export default function DashboardLayout({
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            {navItems.map((item) => (
-              <motion.div
-                key={item.href}
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Link
-                  href={item.href}
-                  className={`
-                    flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
-                    ${item.active 
-                      ? 'bg-primary/10 text-primary border border-primary/20' 
-                      : 'text-muted-foreground hover:text-foreground hover:bg-surface-hover'
-                    }
-                  `}
+          <nav className="flex-1 p-6 space-y-1">
+            {navItems.map((item) => {
+              const isActive = (pathname || "") === item.href || (item.href !== '/' && (pathname || "").startsWith(item.href));
+              return (
+                <motion.div
+                  key={item.href}
+                  whileHover={{ x: 4, scale: 1.03 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.label}</span>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    href={item.href}
+                    className={`
+                      flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200
+                      ${isActive 
+                        ? 'bg-primary/10 text-primary border border-primary/20 shadow-md scale-105' 
+                        : 'text-muted-foreground hover:text-foreground hover:bg-surface-hover'}
+                    `}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <item.icon className={`h-5 w-5 ${isActive ? 'animate-pulse-soft' : ''}`} />
+                    <span className="font-medium">{item.label}</span>
+                    {/* Example: badge for new features */}
+                    {item.label === 'Analytics' && <span className="ml-2 px-2 py-0.5 rounded-full text-xs bg-accent text-white animate-bounce">New</span>}
+                  </Link>
+                </motion.div>
+              );
+            })}
           </nav>
 
           {/* Bottom actions */}
@@ -225,6 +231,20 @@ export default function DashboardLayout({
           <X className="h-6 w-6" />
         </Button>
       )}
+
+      {/* Cool mobile bottom nav bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-surface/95 border-t border-border flex justify-around items-center py-2 shadow-2xl lg:hidden">
+        {navItems.slice(0, 5).map((item) => {
+          const isActive = (pathname || "") === item.href || (item.href !== '/' && (pathname || "").startsWith(item.href));
+          return (
+            <Link key={item.href} href={item.href} className={`flex flex-col items-center px-2 ${isActive ? 'text-primary' : 'text-muted-foreground hover:text-primary'}`}
+              aria-current={isActive ? 'page' : undefined}>
+              <item.icon className={`h-6 w-6 mb-0.5 ${isActive ? 'animate-pulse-soft' : ''}`} />
+              <span className="text-xs font-medium leading-none">{item.label.split(' ')[0]}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </div>
   )
 }

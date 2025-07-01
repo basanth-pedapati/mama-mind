@@ -206,26 +206,26 @@ export default function DoctorDashboardEnhanced() {
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       {/* Header */}
       <motion.header 
-        className="bg-surface border-b border-border shadow-sm sticky top-0 z-50"
+        className="sticky top-0 z-50 border-b shadow-sm bg-surface border-border"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <Heart className="h-8 w-8 text-primary" />
+              <Heart className="w-8 h-8 text-primary" />
               <span className="text-xl font-bold text-foreground">Mama Mind</span>
               <Badge variant="secondary" className="hidden sm:inline-flex">Provider Portal</Badge>
               </div>
             
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <div className="text-right hidden sm:block">
+              <div className="hidden text-right sm:block">
                 <p className="text-sm font-medium text-foreground">Dr. Michelle Carter</p>
                 <p className="text-xs text-foreground-muted">Obstetrician</p>
               </div>
               <Button variant="outline" size="sm" className="hidden sm:flex">
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="mr-2 w-4 h-4" />
                 Sign Out
                 </Button>
               <Button
@@ -234,7 +234,7 @@ export default function DoctorDashboardEnhanced() {
                 className="sm:hidden"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
-                <Menu className="h-4 w-4" />
+                <Menu className="w-4 h-4" />
               </Button>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function DoctorDashboardEnhanced() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-            className="bg-surface border-b border-border sm:hidden"
+            className="border-b bg-surface border-border sm:hidden"
           >
             <div className="px-4 py-3 space-y-2">
               <div className="text-sm">
@@ -256,7 +256,7 @@ export default function DoctorDashboardEnhanced() {
                 <p className="text-foreground-muted">Obstetrician</p>
               </div>
               <Button variant="outline" size="sm" className="w-full">
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="mr-2 w-4 h-4" />
                 Sign Out
               </Button>
             </div>
@@ -264,9 +264,9 @@ export default function DoctorDashboardEnhanced() {
         )}
       </AnimatePresence>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8 sm:py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="grid grid-cols-1 gap-4 mb-6 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:mb-8">
                 <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -275,12 +275,12 @@ export default function DoctorDashboardEnhanced() {
             <Card className="h-full">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center">
-                  <div className="bg-primary/10 p-2 sm:p-3 rounded-full">
-                    <Users className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+                  <div className="p-2 rounded-full bg-primary/10 sm:p-3">
+                    <Users className="w-5 h-5 sm:h-6 sm:w-6 text-primary" />
                   </div>
                   <div className="ml-3 sm:ml-4">
                     <p className="text-xs sm:text-sm text-foreground-muted">Total Patients</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.totalPatients}</p>
+                    <p className="text-xl font-bold sm:text-2xl text-foreground">{stats.totalPatients}</p>
                   </div>
                 </div>
               </CardContent>
@@ -295,12 +295,12 @@ export default function DoctorDashboardEnhanced() {
             <Card className="h-full">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center">
-                  <div className="bg-red-100 p-2 sm:p-3 rounded-full">
-                    <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                  <div className="p-2 bg-red-100 rounded-full sm:p-3">
+                    <AlertTriangle className="w-5 h-5 text-red-600 sm:h-6 sm:w-6" />
                   </div>
                   <div className="ml-3 sm:ml-4">
                     <p className="text-xs sm:text-sm text-foreground-muted">High Risk</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.highRisk}</p>
+                    <p className="text-xl font-bold sm:text-2xl text-foreground">{stats.highRisk}</p>
                   </div>
                 </div>
               </CardContent>
@@ -315,12 +315,12 @@ export default function DoctorDashboardEnhanced() {
             <Card className="h-full">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center">
-                  <div className="bg-yellow-100 p-2 sm:p-3 rounded-full">
-                    <Activity className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-600" />
+                  <div className="p-2 bg-yellow-100 rounded-full sm:p-3">
+                    <Activity className="w-5 h-5 text-yellow-600 sm:h-6 sm:w-6" />
                   </div>
                   <div className="ml-3 sm:ml-4">
                     <p className="text-xs sm:text-sm text-foreground-muted">Active Alerts</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.alertsToday}</p>
+                    <p className="text-xl font-bold sm:text-2xl text-foreground">{stats.alertsToday}</p>
                   </div>
                 </div>
               </CardContent>
@@ -335,12 +335,12 @@ export default function DoctorDashboardEnhanced() {
             <Card className="h-full">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center">
-                  <div className="bg-blue-100 p-2 sm:p-3 rounded-full">
-                    <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                  <div className="p-2 bg-blue-100 rounded-full sm:p-3">
+                    <Calendar className="w-5 h-5 text-blue-600 sm:h-6 sm:w-6" />
                   </div>
                   <div className="ml-3 sm:ml-4">
                     <p className="text-xs sm:text-sm text-foreground-muted">Today&apos;s Appointments</p>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.appointmentsToday}</p>
+                    <p className="text-xl font-bold sm:text-2xl text-foreground">{stats.appointmentsToday}</p>
             </div>
             </div>
               </CardContent>
@@ -353,10 +353,10 @@ export default function DoctorDashboardEnhanced() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6"
+          className="flex flex-col gap-3 mb-6 sm:flex-row sm:gap-4"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-foreground-muted" />
+            <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-foreground-muted" />
           <Input
             placeholder="Search patients..."
             value={searchTerm}
@@ -369,7 +369,7 @@ export default function DoctorDashboardEnhanced() {
             <select
               value={selectedRiskFilter}
               onChange={(e) => setSelectedRiskFilter(e.target.value)}
-              className="px-3 py-2 border border-border rounded-lg text-sm flex-shrink-0"
+              className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-border"
             >
               <option value="all">All Risk Levels</option>
               <option value="low">Low Risk</option>
@@ -400,24 +400,24 @@ export default function DoctorDashboardEnhanced() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="border border-border rounded-lg p-3 sm:p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
+                    className="p-3 rounded-lg border transition-all duration-200 cursor-pointer border-border sm:p-4 hover:shadow-md"
                     onClick={() => setSelectedPatient(patient)}
             >
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                       {/* Patient Info */}
                 <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
-                          <h3 className="font-semibold text-foreground text-sm sm:text-base">{patient.name}</h3>
+                        <div className="flex flex-wrap gap-2 items-center mb-2 sm:gap-3">
+                          <h3 className="text-sm font-semibold text-foreground sm:text-base">{patient.name}</h3>
                           <Badge className={`${getRiskColor(patient.riskLevel)} text-xs`} variant="secondary">
                             {patient.riskLevel} risk
                           </Badge>
                 {patient.alerts > 0 && (
-                            <Badge variant="destructive" className="text-xs">
+                            <Badge variant="error" className="text-xs">
                               {patient.alerts} alert{patient.alerts > 1 ? 's' : ''}
                             </Badge>
                 )}
               </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-foreground-muted">
+                        <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-4 sm:gap-4 sm:text-sm text-foreground-muted">
                           <div>
                             <span className="font-medium">Age:</span> {patient.age}
                           </div>
@@ -436,8 +436,8 @@ export default function DoctorDashboardEnhanced() {
               </div>
 
                       {/* Vitals */}
-                      <div className="bg-gray-50 rounded-lg p-2 sm:p-3 min-w-0 flex-shrink-0">
-                        <p className="text-xs text-foreground-muted mb-1 sm:mb-2">Recent Vitals</p>
+                      <div className="flex-shrink-0 p-2 min-w-0 bg-gray-50 rounded-lg sm:p-3">
+                        <p className="mb-1 text-xs text-foreground-muted sm:mb-2">Recent Vitals</p>
                         <div className="space-y-1">
                           <div className="flex items-center space-x-2">
                             <span className="text-xs font-medium">BP:</span>
@@ -455,41 +455,32 @@ export default function DoctorDashboardEnhanced() {
               </div>
 
                       {/* Actions */}
-                      <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                      <div className="flex flex-shrink-0 gap-1 items-center sm:gap-2">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="h-8 px-2 sm:px-3"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleCall(patient.phone);
-                          }}
+                          className="px-2 h-8 sm:px-3"
+                          onClick={() => handleCall(patient.phone)}
                         >
-                          <Phone className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          <Phone className="mr-1 w-3 h-3 sm:h-4 sm:w-4" />
                           <span className="hidden sm:inline">Call</span>
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="h-8 px-2 sm:px-3"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMessage(patient.email, patient.name);
-                          }}
+                          className="px-2 h-8 sm:px-3"
+                          onClick={() => handleMessage(patient.email, patient.name)}
                         >
-                          <Mail className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                          <Mail className="mr-1 w-3 h-3 sm:h-4 sm:w-4" />
                           <span className="hidden sm:inline">Message</span>
                         </Button>
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="h-8 w-8 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedPatient(patient);
-                          }}
+                          className="p-0 w-8 h-8"
+                          onClick={() => setSelectedPatient(patient)}
                         >
-                          <MoreVertical className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <MoreVertical className="w-3 h-3 sm:h-4 sm:w-4" />
                 </Button>
                       </div>
               </div>
@@ -497,8 +488,8 @@ export default function DoctorDashboardEnhanced() {
           ))}
 
                 {filteredPatients.length === 0 && (
-                  <div className="text-center py-8 text-foreground-muted">
-                    <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <div className="py-8 text-center text-foreground-muted">
+                    <Users className="mx-auto mb-4 w-12 h-12 opacity-50" />
                     <p>No patients found</p>
                     <p className="text-sm">Try adjusting your search or filters</p>
                   </div>
@@ -516,7 +507,7 @@ export default function DoctorDashboardEnhanced() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+            className="flex fixed inset-0 z-50 justify-center items-center p-4 bg-black/50"
             onClick={() => setSelectedPatient(null)}
           >
             <motion.div
@@ -524,16 +515,16 @@ export default function DoctorDashboardEnhanced() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="bg-surface rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
+              <div className="flex justify-between items-center p-4 border-b sm:p-6 border-border">
                 <div className="flex items-center space-x-3">
-                  <div className="bg-primary/10 p-2 rounded-full">
-                    <User className="h-6 w-6 text-primary" />
+                  <div className="p-2 rounded-full bg-primary/10">
+                    <User className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-foreground">{selectedPatient.name}</h2>
+                    <h2 className="text-xl font-bold sm:text-2xl text-foreground">{selectedPatient.name}</h2>
                     <p className="text-sm text-foreground-muted">Patient ID: {selectedPatient.id}</p>
                   </div>
                   </div>
@@ -541,52 +532,52 @@ export default function DoctorDashboardEnhanced() {
                     variant="ghost"
                     size="sm"
                   onClick={() => setSelectedPatient(null)}
-                  className="h-8 w-8 p-0"
+                  className="p-0 w-8 h-8"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
 
               {/* Content */}
               <div className="overflow-y-auto max-h-[calc(90vh-80px)]">
-                <div className="p-4 sm:p-6 space-y-6">
+                <div className="p-4 space-y-6 sm:p-6">
                   {/* Quick Actions */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <Button 
                       onClick={() => handleCall(selectedPatient.phone)}
-                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                      className="flex flex-col items-center py-3 space-y-1 h-auto"
                     >
-                      <Phone className="h-5 w-5" />
+                      <Phone className="w-5 h-5" />
                       <span className="text-xs">Call</span>
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => handleMessage(selectedPatient.email, selectedPatient.name)}
-                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                      className="flex flex-col items-center py-3 space-y-1 h-auto"
                     >
-                      <MessageCircle className="h-5 w-5" />
+                      <MessageCircle className="w-5 h-5" />
                       <span className="text-xs">Message</span>
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => handleVideoCall(selectedPatient.name)}
-                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                      className="flex flex-col items-center py-3 space-y-1 h-auto"
                     >
-                      <Video className="h-5 w-5" />
+                      <Video className="w-5 h-5" />
                       <span className="text-xs">Video Call</span>
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => handleViewRecords(selectedPatient.name)}
-                      className="flex flex-col items-center space-y-1 h-auto py-3"
+                      className="flex flex-col items-center py-3 space-y-1 h-auto"
                     >
-                      <FileText className="h-5 w-5" />
+                      <FileText className="w-5 h-5" />
                       <span className="text-xs">Records</span>
                     </Button>
                   </div>
 
                   {/* Patient Information */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Basic Info */}
                     <Card>
                       <CardHeader>
@@ -615,11 +606,11 @@ export default function DoctorDashboardEnhanced() {
                         </div>
                         <div>
                           <span className="font-medium text-foreground-muted">Address:</span>
-                          <p className="text-foreground text-sm">{selectedPatient.address}</p>
+                          <p className="text-sm text-foreground">{selectedPatient.address}</p>
                         </div>
                         <div>
                           <span className="font-medium text-foreground-muted">Emergency Contact:</span>
-                          <p className="text-foreground text-sm">{selectedPatient.emergencyContact}</p>
+                          <p className="text-sm text-foreground">{selectedPatient.emergencyContact}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -651,7 +642,7 @@ export default function DoctorDashboardEnhanced() {
                   </div>
 
                   {/* Medical Information */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Medical History */}
                     <Card>
                       <CardHeader>
@@ -661,7 +652,7 @@ export default function DoctorDashboardEnhanced() {
                         <div className="space-y-2">
                           {selectedPatient.medicalHistory.map((item, index) => (
                             <div key={index} className="flex items-center space-x-2">
-                              <div className="w-2 h-2 bg-primary rounded-full"></div>
+                              <div className="w-2 h-2 rounded-full bg-primary"></div>
                               <span className="text-sm text-foreground">{item}</span>
                             </div>
                           ))}
@@ -688,7 +679,7 @@ export default function DoctorDashboardEnhanced() {
                   </div>
 
                   {/* Allergies and Notes */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     {/* Allergies */}
                     <Card>
                       <CardHeader>
@@ -706,9 +697,9 @@ export default function DoctorDashboardEnhanced() {
                           ) : (
                             <p className="text-sm text-foreground-muted">No known allergies</p>
                           )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </div>
+                      </CardContent>
+                    </Card>
 
                     {/* Recent Vitals */}
                     <Card>
@@ -717,19 +708,19 @@ export default function DoctorDashboardEnhanced() {
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between">
+                          <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-foreground-muted">Blood Pressure:</span>
                             <span className={`text-sm font-medium ${getStatusColor(selectedPatient.recentVitals.status)}`}>
                               {selectedPatient.recentVitals.bloodPressure}
                             </span>
                           </div>
-                          <div className="flex items-center justify-between">
+                          <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-foreground-muted">Weight:</span>
                             <span className="text-sm font-medium text-foreground">
                               {selectedPatient.recentVitals.weight}
                             </span>
                           </div>
-                          <div className="flex items-center justify-between">
+                          <div className="flex justify-between items-center">
                             <span className="text-sm font-medium text-foreground-muted">Status:</span>
                             <Badge className={`${getRiskColor(selectedPatient.recentVitals.status)}`}>
                               {selectedPatient.recentVitals.status}

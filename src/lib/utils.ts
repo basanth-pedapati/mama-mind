@@ -94,13 +94,13 @@ export function formatBloodPressure(systolic: number, diastolic: number): string
 export function getVitalsStatusColor(status: 'normal' | 'warning' | 'critical'): string {
   switch (status) {
     case 'normal':
-      return 'text-green-600 bg-green-50 border-green-200'
+      return 'text-success bg-success border-success'
     case 'warning':
-      return 'text-yellow-600 bg-yellow-50 border-yellow-200'
+      return 'text-accent bg-accent border-accent'
     case 'critical':
-      return 'text-red-600 bg-red-50 border-red-200'
+      return 'text-error bg-error border-error'
     default:
-      return 'text-gray-600 bg-gray-50 border-gray-200'
+      return 'text-secondary bg-surface border-border'
   }
 }
 

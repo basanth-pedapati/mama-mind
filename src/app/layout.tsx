@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   description: "AI-powered maternity care platform for expecting mothers and healthcare providers. Track vitals, get personalized insights, and ensure the health of mother and baby.",
   keywords: ["maternity care", "pregnancy tracking", "AI healthcare", "prenatal care", "maternal health"],
   authors: [{ name: "Mama Mind Team" }],
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

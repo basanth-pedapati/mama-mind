@@ -1,371 +1,204 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap");
 @import "tailwindcss";
 
 :root {
-  /* Mama Mind MVP Brand Colors */
-  --primary: 142 202 209;        /* teal - #8ECAD1 */
-  --primary-dark: 70 109 119;    /* navy - #466D77 */
-  --secondary: 70 109 119;       /* navy - #466D77 */
-  --accent: 248 233 161;         /* soft yellow - #F8E9A1 */
-  --success: 34 197 94;          /* green for success states */
-  --error: 239 68 68;            /* red for errors */
-  --warning: 245 158 11;         /* orange for warnings */
-  
-  /* Background & Surface Colors */
-  --background: 250 250 250;     /* off-white - #FAFAFA */
-  --surface: 255 255 255;        /* pure white for cards */
-  --surface-light: 228 231 235;  /* light gray - #E4E7EB */
-  --surface-hover: 240 243 247;  /* hover state */
-  
-  /* Text Colors */
-  --foreground: 45 55 72;        /* dark text - #2D3748 */
-  --foreground-muted: 113 128 150; /* muted text - #718096 */
-  --foreground-light: 160 174 192; /* light text - #A0AEC0 */
-  
-  /* Border & Divider */
-  --border: 226 232 240;         /* #E2E8F0 */
-  --border-light: 237 242 247;   /* #EDF2F7 */
-  
-  /* Medical/Health Specific */
-  --vitals-normal: 168 213 186;  /* normal vitals green */
-  --vitals-warning: 245 215 110; /* warning vitals yellow */
-  --vitals-critical: 245 183 161; /* critical vitals coral */
-  
-  /* Interactive States */
-  --focus-ring: 142 202 209;     /* #8ECAD1 */
-  --disabled: 226 232 240;       /* #E2E8F0 */
-  --disabled-text: 160 174 192;  /* #A0AEC0 */
-  
-  /* Border Radius */
+  --primary: 142 202 209; /* #8ECAD1 */
+  --secondary: 70 109 119; /* #466D77 */
+  --accent: 248 233 161; /* #F8E9A1 */
+  --background: 250 250 250; /* #FAFAFA */
+  --surface: 228 231 235; /* #E4E7EB */
+  --success: 168 213 186; /* #A8D5BA */
+  --error: 245 183 161; /* #F5B7A1 */
+  --text-primary: 30 45 50; /* #1E2D32 */
+  --text-secondary: 101 119 125; /* #65777D */
+  --border: 226 232 240; /* #E2E8F0 */
   --radius: 0.75rem;
   --radius-sm: 0.5rem;
   --radius-lg: 1rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: 26 32 44;      /* #1A202C */
-    --surface: 45 55 72;         /* #2D3748 */
-    --surface-light: 74 85 104;  /* #4A5568 */
-    --surface-hover: 55 65 81;   /* #374151 */
-    --foreground: 247 250 252;   /* #F7FAFC */
-    --foreground-muted: 203 213 224; /* #CBD5E0 */
-    --foreground-light: 160 174 192; /* #A0AEC0 */
-    --border: 74 85 104;         /* #4A5568 */
-    --border-light: 55 65 81;    /* #374151 */
-  }
-}
-
-/* Base Styles */
 * {
   box-sizing: border-box;
 }
 
 body {
   background: rgb(var(--background));
-  color: rgb(var(--foreground));
-  font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  color: rgb(var(--text-primary));
+  font-family: "Open Sans", "Segoe UI", Arial, sans-serif;
+  min-height: 100vh;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Heading Styles */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   font-weight: 600;
   line-height: 1.2;
-  color: rgb(var(--foreground));
+  color: rgb(var(--text-primary));
 }
 
-/* Focus Styles for Accessibility */
 *:focus-visible {
-  outline: 2px solid rgb(var(--focus-ring));
+  outline: 2px solid rgb(var(--primary));
   outline-offset: 2px;
 }
 
-/* Medical/Healthcare specific utility classes */
-.vitals-normal {
-  background-color: rgb(var(--vitals-normal));
-  color: rgb(var(--secondary));
-}
-
-.vitals-warning {
-  background-color: rgb(var(--vitals-warning));
-  color: rgb(var(--secondary));
-}
-
-.vitals-critical {
-  background-color: rgb(var(--vitals-critical));
-  color: rgb(var(--secondary));
-}
-
-/* Smooth transitions for better UX */
-.transition-mama {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Medical card shadow */
-.card-medical {
-  box-shadow: 0 4px 20px 0 rgba(142, 202, 209, 0.15);
-}
-
-/* Pregnancy progress bar */
-.progress-pregnancy {
-  background: linear-gradient(90deg, rgb(var(--primary)) 0%, rgb(var(--accent)) 100%);
-}
-
-/* Responsive text sizing */
-.text-responsive {
-  font-size: clamp(0.875rem, 2.5vw, 1rem);
-}
-
-.heading-responsive {
-  font-size: clamp(1.5rem, 4vw, 2.25rem);
-}
-
-/* Button Base Styles */
 .btn-primary {
   background-color: rgb(var(--primary));
-  color: rgb(var(--secondary));
-  border: 1px solid rgb(var(--primary));
+  color: #fff;
+  border: none;
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
-  font-weight: 500;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
-
 .btn-primary:hover {
-  background-color: rgb(var(--primary-dark));
-  border-color: rgb(var(--primary-dark));
-  transform: translateY(-1px);
+  background-color: rgb(var(--secondary));
 }
 
 .btn-secondary {
-  background-color: transparent;
+  background-color: rgb(var(--surface));
   color: rgb(var(--secondary));
   border: 1px solid rgb(var(--secondary));
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
-  font-weight: 500;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
   transition: all 0.2s ease;
 }
-
 .btn-secondary:hover {
   background-color: rgb(var(--secondary));
-  color: rgb(var(--surface));
+  color: #fff;
 }
 
-/* Card styles */
 .card {
   background-color: rgb(var(--surface));
   border: 1px solid rgb(var(--border));
   border-radius: var(--radius);
   padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.06);
 }
 
-/* Input styles */
 .input {
   background-color: rgb(var(--surface));
   border: 1px solid rgb(var(--border));
   border-radius: var(--radius-sm);
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  color: rgb(var(--foreground));
+  color: rgb(var(--text-primary));
+  font-family: "Open Sans", sans-serif;
   transition: all 0.2s ease;
 }
-
 .input:focus {
   outline: none;
   border-color: rgb(var(--primary));
   box-shadow: 0 0 0 3px rgba(142, 202, 209, 0.1);
 }
 
-/* Tailwind utility classes for Mama Mind brand */
 .text-primary {
-  color: rgb(var(--primary)) !important;
+  color: rgb(var(--text-primary)) !important;
 }
-
+.text-secondary {
+  color: rgb(var(--text-secondary)) !important;
+}
 .bg-primary {
   background-color: rgb(var(--primary)) !important;
 }
-
-.border-primary {
-  border-color: rgb(var(--primary)) !important;
-}
-
-.text-secondary {
-  color: rgb(var(--secondary)) !important;
-}
-
 .bg-secondary {
   background-color: rgb(var(--secondary)) !important;
 }
-
-.text-accent {
-  color: rgb(var(--accent)) !important;
-}
-
 .bg-accent {
   background-color: rgb(var(--accent)) !important;
 }
-
-.text-foreground {
-  color: rgb(var(--foreground)) !important;
-}
-
 .bg-background {
   background-color: rgb(var(--background)) !important;
 }
-
 .bg-surface {
   background-color: rgb(var(--surface)) !important;
 }
-
-.text-muted-foreground {
-  color: rgb(var(--foreground-muted)) !important;
+.border-primary {
+  border-color: rgb(var(--primary)) !important;
 }
-
-.bg-muted {
-  background-color: rgb(var(--surface-light)) !important;
+.border-secondary {
+  border-color: rgb(var(--secondary)) !important;
 }
-
+.border-accent {
+  border-color: rgb(var(--accent)) !important;
+}
 .border-border {
   border-color: rgb(var(--border)) !important;
 }
-
 .text-success {
   color: rgb(var(--success)) !important;
 }
-
 .bg-success {
   background-color: rgb(var(--success)) !important;
 }
-
 .text-error {
   color: rgb(var(--error)) !important;
 }
-
 .bg-error {
   background-color: rgb(var(--error)) !important;
 }
-
-.text-warning {
-  color: rgb(var(--warning)) !important;
+.text-accent {
+  color: rgb(var(--accent)) !important;
 }
-
 .bg-warning {
-  background-color: rgb(var(--warning)) !important;
+  background-color: #f8e9a1 !important;
+}
+.text-warning {
+  color: #f8e9a1 !important;
 }
 
-/* Additional micro-interaction utilities */
+/* Card shadow, hover, and transition utilities */
+.card-medical {
+  box-shadow: 0 4px 20px 0 rgba(142, 202, 209, 0.1);
+}
 .hover-lift {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-
 .hover-lift:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(142, 202, 209, 0.2);
+  box-shadow: 0 8px 25px rgba(142, 202, 209, 0.15);
 }
 
-/* Gradient backgrounds */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--primary-dark)) 100%);
-}
-
-.bg-gradient-soft {
-  background: linear-gradient(135deg, rgb(var(--background)) 0%, rgb(var(--accent) / 0.05) 50%, rgb(var(--primary) / 0.05) 100%);
-}
-
-.bg-gradient-medical {
-  background: linear-gradient(135deg, rgb(var(--success) / 0.1) 0%, rgb(var(--primary) / 0.1) 100%);
-}
-
-/* Pulse animation for vital indicators */
-@keyframes pulse-soft {
-  0%, 100% {
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 0.5s ease;
+}
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
   }
   50% {
-    opacity: 0.8;
-    transform: scale(1.05);
+    transform: translateY(-6px);
   }
 }
-
-.animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
+.animate-bounce {
+  animation: bounce 1s infinite;
 }
 
-/* Floating animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-/* Gentle glow effect */
-.glow-primary {
-  box-shadow: 0 0 20px rgba(142, 202, 209, 0.3);
-}
-
-.glow-accent {
-  box-shadow: 0 0 20px rgba(248, 233, 161, 0.3);
-}
-
-/* Glass morphism effect */
-.glass {
-  backdrop-filter: blur(16px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-/* Text gradients */
-.text-gradient-primary {
-  background: linear-gradient(135deg, rgb(var(--primary)) 0%, rgb(var(--secondary)) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-gradient-warm {
-  background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--primary)) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* Enhanced focus states for accessibility */
-.focus-mama:focus-visible {
-  outline: 2px solid rgb(var(--primary));
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
-}
-
-/* Loading spinner with brand colors */
-@keyframes spin-mama {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.animate-spin-mama {
-  animation: spin-mama 1s linear infinite;
-  color: rgb(var(--primary));
-}
-
-/* Smooth scale animations */
-.scale-hover {
-  transition: transform 0.2s ease;
-}
-
-.scale-hover:hover {
-  transform: scale(1.05);
-}
-
-.scale-press:active {
-  transform: scale(0.95);
+/* Loader styles */
+.loader-baby {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 180px;
 }

@@ -20,7 +20,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <motion.label
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="block text-sm font-medium text-foreground mb-2"
+            className="block text-sm font-body text-secondary mb-2"
           >
             {label}
           </motion.label>
@@ -30,7 +30,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {Icon && (
             <motion.div
               animate={{
-                color: isFocused ? "rgb(var(--primary))" : "rgb(var(--foreground-muted))",
+                color: isFocused ? "rgb(var(--primary))" : "rgb(var(--text-secondary))",
                 scale: isFocused ? 1.1 : 1
               }}
               transition={{ duration: 0.2 }}
@@ -47,10 +47,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             <input
               type={type}
               className={cn(
-                "flex h-12 w-full rounded-lg border border-border bg-surface px-4 py-3 text-sm text-foreground",
-                "placeholder:text-muted-foreground",
-                "transition-all duration-200",
-                "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                "flex h-12 w-full rounded-md font-body border border-surface focus:ring-primary focus:border-primary text-primary bg-background placeholder:text-secondary text-sm transition-all duration-200",
                 "hover:border-primary/50",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 Icon && "pl-12",
@@ -69,7 +66,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-2 text-sm text-error"
+            className="mt-2 text-sm text-error font-body"
           >
             {error}
           </motion.p>

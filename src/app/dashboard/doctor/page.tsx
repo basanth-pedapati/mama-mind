@@ -20,7 +20,8 @@ import {
   FileText,
   User,
   Menu,
-  Settings
+  Settings,
+  Scale
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +30,9 @@ import { Badge } from '@/components/ui/badge';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { VitalsCard } from '@/components/ui/vitals-card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import VitalsChart from '@/components/VitalsChart';
 
 interface Patient {
   id: string;
@@ -92,6 +96,13 @@ export default function DoctorDashboard() {
   const [selectedRiskFilter, setSelectedRiskFilter] = useState<string>('all');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedVital, setSelectedVital] = useState<{
+    patientName: string;
+    vitalType: 'bloodPressure' | 'weight';
+    value: string;
+    status: 'normal' | 'warning' | 'critical';
+  } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredPatients = mockPatients.filter(patient => {
     const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -147,6 +158,16 @@ export default function DoctorDashboard() {
 
   const handleProfileClick = () => {
     router.push('/profile/doctor');
+  };
+
+  const handleOpenVitalModal = (patientName: string, vitalType: 'bloodPressure' | 'weight', value: string, status: 'normal' | 'warning' | 'critical') => {
+    setSelectedVital({ patientName, vitalType, value, status });
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedVital(null);
   };
 
   return (
@@ -208,104 +229,116 @@ export default function DoctorDashboard() {
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-surface border-b border-border sm:hidden"
-            >
-              <div className="px-4 py-6 space-y-4">
-                {/* User Info */}
-                <div className="text-center pb-4 border-b border-border">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <User className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="font-medium text-foreground">
-                    Dr. {user?.profile?.first_name} {user?.profile?.last_name}
-                  </p>
-                  <p className="text-sm text-foreground-muted">Obstetrician</p>
-                  <Badge variant="outline" className="mt-2">Provider Portal</Badge>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Today&apos;s Overview</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.totalPatients}</p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400">Patients</p>
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 sm:hidden"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+              
+              {/* Mobile Menu */}
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-surface border-b border-border sm:hidden relative z-40 shadow-lg"
+              >
+                <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                  {/* User Info */}
+                  <div className="text-center pb-4 border-b border-border">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <User className="h-8 w-8 text-primary" />
                     </div>
-                    <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-lg text-center">
-                      <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.alertsToday}</p>
-                      <p className="text-xs text-red-600 dark:text-red-400">Alerts</p>
+                    <p className="font-medium text-foreground">
+                      Dr. {user?.profile?.first_name} {user?.profile?.last_name}
+                    </p>
+                    <p className="text-sm text-foreground-muted">Obstetrician</p>
+                    <Badge variant="outline" className="mt-2">Provider Portal</Badge>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Today&apos;s Overview</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.totalPatients}</p>
+                        <p className="text-xs text-blue-600 dark:text-blue-400">Patients</p>
+                      </div>
+                      <div className="bg-red-50 dark:bg-red-950/20 p-3 rounded-lg text-center">
+                        <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.alertsToday}</p>
+                        <p className="text-xs text-red-600 dark:text-red-400">Alerts</p>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Quick Actions */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      // Add search functionality
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Search className="h-4 w-4 mr-3" />
-                    Search Patients
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      // Add calendar functionality
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Calendar className="h-4 w-4 mr-3" />
-                    View Schedule
-                  </Button>
-                </div>
+                  {/* Quick Actions */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        // Add search functionality
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Search className="h-4 w-4 mr-3" />
+                      Search Patients
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        // Add calendar functionality
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Calendar className="h-4 w-4 mr-3" />
+                      View Schedule
+                    </Button>
+                  </div>
 
-                {/* Navigation */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      handleProfileClick();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Settings className="h-4 w-4 mr-3" />
-                    Profile Settings
-                  </Button>
-                </div>
+                  {/* Navigation */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleProfileClick();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Profile Settings
+                    </Button>
+                  </div>
 
-                {/* Account */}
-                <div className="space-y-2 pt-4 border-t border-border">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start text-red-600 hover:text-red-700"
-                    onClick={() => {
-                      handleSignOut();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign Out
-                  </Button>
+                  {/* Account */}
+                  <div className="space-y-2 pt-4 border-t border-border">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start text-red-600 hover:text-red-700"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Sign Out
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
 
@@ -457,7 +490,7 @@ export default function DoctorDashboard() {
                               {patient.riskLevel} risk
                             </Badge>
                             {patient.alerts > 0 && (
-                              <Badge variant="destructive" className="text-xs">
+                              <Badge variant="error" className="text-xs">
                                 {patient.alerts} alert{patient.alerts > 1 ? 's' : ''}
                               </Badge>
                             )}
@@ -484,17 +517,13 @@ export default function DoctorDashboard() {
                         <div className="bg-gray-50 rounded-lg p-2 sm:p-3 min-w-0 flex-shrink-0">
                           <p className="text-xs text-foreground-muted mb-1 sm:mb-2">Recent Vitals</p>
                           <div className="space-y-1">
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleOpenVitalModal(patient.name, 'bloodPressure', patient.recentVitals.bloodPressure, patient.recentVitals.status)} tabIndex={0} role="button" aria-label={`View details for ${patient.name} blood pressure`} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleOpenVitalModal(patient.name, 'bloodPressure', patient.recentVitals.bloodPressure, patient.recentVitals.status); }}>
                               <span className="text-xs font-medium">BP:</span>
-                              <span className={`text-xs ${getStatusColor(patient.recentVitals.status)}`}>
-                                {patient.recentVitals.bloodPressure}
-                              </span>
+                              <span className={`text-xs ${getStatusColor(patient.recentVitals.status)}`}>{patient.recentVitals.bloodPressure}</span>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleOpenVitalModal(patient.name, 'weight', patient.recentVitals.weight, patient.recentVitals.status)} tabIndex={0} role="button" aria-label={`View details for ${patient.name} weight`} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleOpenVitalModal(patient.name, 'weight', patient.recentVitals.weight, patient.recentVitals.status); }}>
                               <span className="text-xs font-medium">Weight:</span>
-                              <span className="text-xs text-foreground">
-                                {patient.recentVitals.weight}
-                              </span>
+                              <span className="text-xs text-foreground">{patient.recentVitals.weight}</span>
                             </div>
                           </div>
                         </div>
@@ -505,10 +534,7 @@ export default function DoctorDashboard() {
                             variant="outline" 
                             size="sm" 
                             className="h-8 px-2 sm:px-3"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleCall(patient.phone);
-                            }}
+                            onClick={() => handleCall(patient.phone)}
                           >
                             <Phone className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                             <span className="hidden sm:inline">Call</span>
@@ -517,10 +543,7 @@ export default function DoctorDashboard() {
                             variant="outline" 
                             size="sm" 
                             className="h-8 px-2 sm:px-3"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleMessage(patient.email, patient.name);
-                            }}
+                            onClick={() => handleMessage(patient.email, patient.name)}
                           >
                             <Mail className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                             <span className="hidden sm:inline">Message</span>
@@ -529,7 +552,7 @@ export default function DoctorDashboard() {
                             variant="outline" 
                             size="sm" 
                             className="h-8 w-8 p-0"
-                            onClick={(e) => {
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                               e.stopPropagation();
                               setSelectedPatient(patient);
                             }}
@@ -721,6 +744,36 @@ export default function DoctorDashboard() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Modal for detailed vital info */}
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogContent className="max-w-lg w-full sm:rounded-lg p-0 overflow-hidden bg-white shadow-2xl sm:max-h-[90vh] flex flex-col">
+            <DialogHeader className="flex flex-row items-center justify-between px-4 pt-4 pb-2 border-b border-border">
+              <DialogTitle className="text-lg font-bold">
+                {selectedVital ? `${selectedVital.patientName} - ${selectedVital.vitalType === 'bloodPressure' ? 'Blood Pressure' : 'Weight'} Details` : ''}
+              </DialogTitle>
+              <DialogClose onClick={handleCloseModal} className="ml-auto text-2xl text-muted-foreground hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded-full px-2 py-1" aria-label="Close">×</DialogClose>
+            </DialogHeader>
+            {selectedVital && (
+              <div className="p-4 space-y-6 overflow-y-auto">
+                <VitalsCard vitals={[{
+                  id: `${selectedVital.patientName}-${selectedVital.vitalType}`,
+                  name: selectedVital.vitalType === 'bloodPressure' ? 'Blood Pressure' : 'Weight',
+                  value: selectedVital.value,
+                  unit: selectedVital.vitalType === 'bloodPressure' ? 'mmHg' : 'kg',
+                  status: selectedVital.status,
+                  trend: 'stable',
+                  icon: selectedVital.vitalType === 'bloodPressure' ? Heart : Scale,
+                  lastUpdated: '', // Add if available
+                  normalRange: selectedVital.vitalType === 'bloodPressure' ? '90/60 - 140/90' : 'Varies',
+                }]} />
+                <div>
+                  <VitalsChart type={selectedVital.vitalType === 'bloodPressure' ? 'blood_pressure' : 'weight'} />
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </ProtectedRoute>
   );

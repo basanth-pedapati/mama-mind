@@ -35,6 +35,8 @@ import VitalsChart from '@/components/VitalsChart';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { VitalsCard } from '@/components/ui/vitals-card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 
 interface Vital {
   id: string;
@@ -126,17 +128,20 @@ export default function PatientDashboard() {
   // Calculate pregnancy progress
   const calculatePregnancyProgress = () => {
     const today = new Date();
-    const startDate = new Date(dueDate);
-    startDate.setDate(startDate.getDate() - 280); // 40 weeks = 280 days
-    
     const totalDays = 280;
+    const due = new Date(dueDate);
+    const startDate = new Date(due);
+    startDate.setDate(startDate.getDate() - totalDays);
     const daysElapsed = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysRemaining = Math.max(0, Math.floor((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
     const progress = Math.min(Math.max((daysElapsed / totalDays) * 100, 0), 100);
-    
+    const weeksRemaining = Math.ceil(daysRemaining / 7);
     return {
       progress: Math.round(progress),
-      daysRemaining: Math.max(0, Math.floor((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))),
-      weeksRemaining: Math.ceil(Math.max(0, (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24 * 7)))
+      daysRemaining,
+      weeksRemaining,
+      daysElapsed,
+      totalDays
     };
   };
 
@@ -281,6 +286,19 @@ export default function PatientDashboard() {
     }
   ];
 
+  const [selectedVital, setSelectedVital] = useState<Vital | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Helper to open modal with selected vital
+  const handleOpenVitalModal = (vital: Vital) => {
+    setSelectedVital(vital);
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedVital(null);
+  };
+
   return (
     <ProtectedRoute allowedRoles={['patient']}>
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
@@ -334,190 +352,213 @@ export default function PatientDashboard() {
                 </Button>
               </div>
             </div>
-            
-            {/* Pregnancy Progress Bar */}
-            <div className="pb-4">
+          </div>
+        </motion.header>
+
+        {/* Pregnancy Progress Bar - always below header, never in header */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+          <Card className="mb-6">
+            <CardContent className="py-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
                   <Baby className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium text-foreground">Pregnancy Progress</span>
+                  <span className="text-sm font-medium text-primary font-heading">Pregnancy Progress</span>
                 </div>
-                <span className="text-sm text-foreground-muted">
-                  {pregnancyProgress.weeksRemaining} weeks remaining
+                <span className="text-sm text-secondary font-body">
+                  {pregnancyProgress.daysRemaining} days left ({pregnancyProgress.weeksRemaining} weeks)
                 </span>
               </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+              <div className="relative w-full h-4 bg-surface rounded-full overflow-hidden flex items-center">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${pregnancyProgress.progress}%` }}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full relative"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-                </motion.div>
+                  transition={{ duration: 1, ease: 'easeOut' }}
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full shadow-sm"
+                />
+                {/* Marker for today */}
+                <div
+                  className="absolute top-0 h-4 w-1.5 bg-secondary rounded-full shadow-md"
+                  style={{ left: `calc(${pregnancyProgress.progress}% - 4px)` }}
+                  aria-label="Today marker"
+                />
               </div>
-              <div className="flex justify-between text-xs text-foreground-muted mt-1">
-                <span>Week 1</span>
-                <span className="text-primary font-medium">{pregnancyProgress.progress}%</span>
-                <span>Week 40</span>
+              <div className="flex justify-between text-xs text-secondary font-body mt-1">
+                <span>Start</span>
+                <span className="text-primary font-heading font-medium">{pregnancyProgress.progress}%</span>
+                <span>Due</span>
               </div>
-            </div>
-          </div>
-        </motion.header>
+              <div className="text-xs text-secondary font-body text-right mt-1">
+                Due date: <span className="font-semibold text-primary">{dueDate.toLocaleDateString()}</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Mobile Menu */}
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-surface border-b border-border sm:hidden"
-            >
-              <div className="px-4 py-6 space-y-4">
-                {/* User Info */}
-                <div className="text-center pb-4 border-b border-border">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <User className="h-8 w-8 text-primary" />
-                  </div>
-                  <p className="font-medium text-foreground">
-                    {user?.profile?.first_name} {user?.profile?.last_name}
-                  </p>
-                  <p className="text-sm text-foreground-muted">Week {gestationalWeek}</p>
-                  <Badge variant="outline" className="mt-2">Patient</Badge>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start" 
-                    onClick={() => {
-                      setShowVitalsForm(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Plus className="h-4 w-4 mr-3" />
-                    Add Vitals
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      setShowChat(true);
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <MessageCircle className="h-4 w-4 mr-3" />
-                    Chat Assistant
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      handleEmergencyAlert();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <AlertTriangle className="h-4 w-4 mr-3" />
-                    Emergency Alert
-                  </Button>
-                </div>
-
-                {/* Interface Toggle */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">View Mode</h3>
-                  <Button 
-                    variant={interfaceMode === 'mother' ? 'default' : 'outline'}
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      toggleInterfaceMode();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <User className="h-4 w-4 mr-3" />
-                    Maternal View
-                  </Button>
-                  <Button 
-                    variant={interfaceMode === 'child' ? 'default' : 'outline'}
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      toggleInterfaceMode();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Baby className="h-4 w-4 mr-3" />
-                    Baby View
-                  </Button>
-                </div>
-
-                {/* Navigation */}
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      handleProfileClick();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <Settings className="h-4 w-4 mr-3" />
-                    Profile Settings
-                  </Button>
-                </div>
-
-                {/* Account */}
-                <div className="space-y-2 pt-4 border-t border-border">
-                  <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full justify-start text-red-600 hover:text-red-700"
-                    onClick={() => {
-                      handleSignOut();
-                      setIsMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-3" />
-                    Sign Out
-                  </Button>
-                </div>
-
-                {/* Pregnancy Progress (Mobile) */}
-                <div className="pt-4 border-t border-border">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <Baby className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium text-foreground">Progress</span>
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 sm:hidden"
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+              
+              {/* Mobile Menu */}
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="bg-surface border-b border-border sm:hidden relative z-40 shadow-lg"
+              >
+                <div className="px-4 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+                  {/* User Info */}
+                  <div className="text-center pb-4 border-b border-border">
+                    <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <User className="h-8 w-8 text-primary" />
                     </div>
-                    <span className="text-xs text-foreground-muted">
-                      {pregnancyProgress.weeksRemaining}w left
-                    </span>
+                    <p className="font-medium text-foreground">
+                      {user?.profile?.first_name} {user?.profile?.last_name}
+                    </p>
+                    <p className="text-sm text-foreground-muted">Week {gestationalWeek}</p>
+                    <Badge variant="outline" className="mt-2">Patient</Badge>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${pregnancyProgress.progress}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
-                    />
+
+                  {/* Quick Actions */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Quick Actions</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start" 
+                      onClick={() => {
+                        setShowVitalsForm(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Plus className="h-4 w-4 mr-3" />
+                      Add Vitals
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        setShowChat(true);
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <MessageCircle className="h-4 w-4 mr-3" />
+                      Chat Assistant
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleEmergencyAlert();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <AlertTriangle className="h-4 w-4 mr-3" />
+                      Emergency Alert
+                    </Button>
                   </div>
-                  <div className="flex justify-between text-xs text-foreground-muted mt-1">
-                    <span>W1</span>
-                    <span className="text-primary font-medium">{pregnancyProgress.progress}%</span>
-                    <span>W40</span>
+
+                  {/* Interface Toggle */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">View Mode</h3>
+                    <Button 
+                      variant={interfaceMode === 'mother' ? 'default' : 'outline'}
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        toggleInterfaceMode();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <User className="h-4 w-4 mr-3" />
+                      Maternal View
+                    </Button>
+                    <Button 
+                      variant={interfaceMode === 'child' ? 'default' : 'outline'}
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        toggleInterfaceMode();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Baby className="h-4 w-4 mr-3" />
+                      Baby View
+                    </Button>
+                  </div>
+
+                  {/* Navigation */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Navigation</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start"
+                      onClick={() => {
+                        handleProfileClick();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <Settings className="h-4 w-4 mr-3" />
+                      Profile Settings
+                    </Button>
+                  </div>
+
+                  {/* Account */}
+                  <div className="space-y-2 pt-4 border-t border-border">
+                    <h3 className="text-sm font-medium text-foreground-muted uppercase tracking-wide">Account</h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full justify-start text-red-600 hover:text-red-700"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="h-4 w-4 mr-3" />
+                      Sign Out
+                    </Button>
+                  </div>
+
+                  {/* Pregnancy Progress (Mobile) */}
+                  <div className="pt-4 border-t border-border">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center space-x-2">
+                        <Baby className="h-4 w-4 text-primary" />
+                        <span className="text-sm font-medium text-foreground">Progress</span>
+                      </div>
+                      <span className="text-xs text-foreground-muted">
+                        {pregnancyProgress.weeksRemaining}w left
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pregnancyProgress.progress}%` }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                      />
+                    </div>
+                    <div className="flex justify-between text-xs text-foreground-muted mt-1">
+                      <span>W1</span>
+                      <span className="text-primary font-medium">{pregnancyProgress.progress}%</span>
+                      <span>W40</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
                 
@@ -758,37 +799,41 @@ export default function PatientDashboard() {
                         exit={{ opacity: 0, height: 0 }}
                         className="space-y-2"
                       >
-                        {vitals
-                          .filter(vital => vital.interface === interfaceMode)
-                          .slice(0, 5)
-                          .map((vital) => (
-                            <motion.div
-                              key={vital.id}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              className="flex items-center justify-between p-3 bg-surface-light rounded-lg border border-border/50 hover:shadow-sm transition-all duration-200"
-                            >
-                              <div className="flex items-center space-x-3">
-                                <div className={`p-2 rounded-full ${getStatusColor(vital.status)}/10`}>
-                                  {getVitalIcon(vital.type)}
-                                </div>
-                                <div>
-                                  <p className="font-medium text-foreground">{getVitalLabel(vital.type)}</p>
-                                  <p className="text-sm text-foreground-muted">
-                                    {vital.timestamp.toLocaleDateString()} at {vital.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </p>
-                                </div>
+                        {filteredVitals.slice(0, 5).map((vital) => (
+                          <div
+                            key={vital.id}
+                            className="flex items-center justify-between p-3 bg-background/50 rounded-lg border border-border hover:shadow-sm transition-all duration-200 cursor-pointer"
+                            onClick={() => handleOpenVitalModal(vital)}
+                            tabIndex={0}
+                            role="button"
+                            aria-label={`View details for ${getVitalLabel(vital.type)}`}
+                            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleOpenVitalModal(vital); }}
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className={`p-2 rounded-full ${getStatusColor(vital.status)}/10`}>
+                                {getVitalIcon(vital.type)}
                               </div>
-                              <div className="text-right">
-                                <p className={`font-semibold ${getStatusColor(vital.status)}`}>{vital.value}</p>
-                                <Badge variant={vital.status === 'normal' ? 'secondary' : vital.status === 'warning' ? 'default' : 'destructive'} className="text-xs">
-                                  {vital.status}
-                                </Badge>
+                              <div>
+                                <p className="font-medium text-foreground">{getVitalLabel(vital.type)}</p>
+                                <p className="text-sm text-foreground-muted">
+                                  {vital.timestamp.toLocaleDateString()} at {vital.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </p>
                               </div>
-                            </motion.div>
-                          ))}
+                            </div>
+                            <div className="text-right">
+                              <p className={`font-semibold ${getStatusColor(vital.status)}`}>{vital.value}</p>
+                              <Badge variant={
+                                vital.status === 'normal' ? 'secondary' :
+                                vital.status === 'warning' ? 'default' :
+                                vital.status === 'critical' ? 'error' : undefined
+                              } className="text-xs">
+                                {vital.status}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
                         
-                        {vitals.filter(vital => vital.interface === interfaceMode).length === 0 && (
+                        {filteredVitals.length === 0 && (
                           <div className="text-center py-8 text-foreground-muted">
                             <Activity className="h-12 w-12 mx-auto mb-4 opacity-50" />
                             <p>No {interfaceMode === 'mother' ? 'maternal' : 'baby'} vitals recorded yet</p>
@@ -1308,6 +1353,36 @@ e                      <Button
             <ChatAssistant onClose={() => setShowChat(false)} />
         )}
       </AnimatePresence>
+
+      {/* Modal for detailed vital info */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="max-w-lg w-full sm:rounded-lg p-0 overflow-hidden bg-white shadow-2xl sm:max-h-[90vh] flex flex-col">
+          <DialogHeader className="flex flex-row items-center justify-between px-4 pt-4 pb-2 border-b border-border">
+            <DialogTitle className="text-lg font-bold">
+              {selectedVital ? getVitalLabel(selectedVital.type) + ' Details' : ''}
+            </DialogTitle>
+            <DialogClose onClick={handleCloseModal} className="ml-auto text-2xl text-muted-foreground hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded-full px-2 py-1" aria-label="Close">×</DialogClose>
+          </DialogHeader>
+          {selectedVital && (
+            <div className="p-4 space-y-6 overflow-y-auto">
+              <VitalsCard vitals={[{
+                id: selectedVital.id,
+                name: getVitalLabel(selectedVital.type),
+                value: selectedVital.value,
+                unit: selectedVital.type === 'weight' ? 'kg' : selectedVital.type === 'blood_pressure' ? 'mmHg' : selectedVital.type === 'glucose' ? 'mg/dL' : selectedVital.type === 'heart_rate' ? 'bpm' : selectedVital.type === 'temperature' ? '°F' : '',
+                status: selectedVital.status,
+                trend: 'stable',
+                icon: getVitalIcon(selectedVital.type).type,
+                lastUpdated: selectedVital.timestamp.toLocaleString(),
+                normalRange: selectedVital.type === 'weight' ? 'Varies' : selectedVital.type === 'blood_pressure' ? '90/60 - 140/90' : selectedVital.type === 'glucose' ? '70-140' : selectedVital.type === 'heart_rate' ? '60-100' : selectedVital.type === 'temperature' ? '97.0 - 99.5' : ''
+              }]} />
+              <div>
+                <VitalsChart type={selectedVital.type === 'weight' ? 'weight' : selectedVital.type === 'blood_pressure' ? 'blood_pressure' : selectedVital.type === 'glucose' ? 'glucose' : 'weight'} />
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
               </div>
     </ProtectedRoute>
   );

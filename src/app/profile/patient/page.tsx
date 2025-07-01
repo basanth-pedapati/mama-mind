@@ -346,7 +346,7 @@ export default function PatientProfilePage() {
                     <label className="text-sm font-medium text-muted-foreground">Risk Factors</label>
                     <div className="mt-2 space-y-1">
                       {profile.pregnancyInfo.highRiskFactors.map((factor, index) => (
-                        <Badge key={index} variant="destructive" className="mr-2">
+                        <Badge key={index} variant="error" className="mr-2">
                           <AlertTriangle className="h-3 w-3 mr-1" />
                           {factor}
                         </Badge>

@@ -46,7 +46,7 @@ export function FeatureGrid({
   }
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-accent/5 via-background to-primary/5 relative overflow-hidden">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
         <motion.div 
@@ -63,23 +63,23 @@ export function FeatureGrid({
               whileInView={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6 border border-primary/20"
+              className="inline-flex items-center space-x-2 bg-primary/10 text-primary px-4 py-2 rounded-full mb-6 border border-primary/20 font-body"
             >
               {badge.icon ? <badge.icon className="h-4 w-4" /> : <Heart className="h-4 w-4" />}
-              <span className="text-sm font-medium">{badge.text}</span>
+              <span className="text-sm font-body font-medium">{badge.text}</span>
             </motion.div>
           )}
           
           {/* Title */}
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 text-secondary">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4 text-secondary">
             {title.main}
             {title.highlight && (
-              <span className="text-primary block mt-2">{title.highlight}</span>
+              <span className="text-primary block mt-2 font-heading">{title.highlight}</span>
             )}
           </h2>
           
           {/* Description */}
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-secondary max-w-2xl mx-auto leading-relaxed font-body">
             {description}
           </p>
         </motion.div>
@@ -100,7 +100,7 @@ export function FeatureGrid({
               transition={{ duration: 0.5, delay: 0.1 }}
               className="group"
             >
-              <Card className="h-full bg-surface/80 backdrop-blur-sm border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-primary/30 group-hover:bg-surface/90">
+              <Card className="h-full bg-surface border-border/50 shadow-md hover:shadow-lg transition-all duration-300 hover:border-primary/30 group-hover:bg-surface">
                 <CardHeader className="pb-4">
                   <motion.div
                     whileHover={{ rotate: 360 }}
@@ -109,12 +109,12 @@ export function FeatureGrid({
                   >
                     <feature.icon className="h-12 w-12 text-primary mb-4 group-hover:scale-110 transition-transform duration-300" />
                   </motion.div>
-                  <CardTitle className="text-xl text-secondary group-hover:text-primary transition-colors">
+                  <CardTitle className="text-xl font-heading text-secondary group-hover:text-primary transition-colors">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base text-muted-foreground leading-relaxed">
+                  <CardDescription className="text-base font-body text-secondary leading-relaxed">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
